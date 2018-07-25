@@ -1,0 +1,17 @@
+{
+  "extends": "@blackbaud/skyux-builder/tslint",
+  "rules": {
+    "ordered-imports": [
+      true,
+      {
+        "grouped-imports": true,
+        "module-source-path": "full"
+      }
+    ],
+    "typedef": [
+      true,
+      "call-signature",
+      "property-declaration"
+    ]
+  }
+}
