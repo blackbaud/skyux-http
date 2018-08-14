@@ -1,5 +1,10 @@
 {
-  "name": "skyux-core",
+  "name": "skyux-http",
   "mode": "easy",
-  "compileMode": "aot"
+  "compileMode": "aot",
+  "testSettings": {
+    "unit": {
+      "browserSet": "paranoid"
+    }
+  }
 }
