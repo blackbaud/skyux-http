@@ -9,28 +9,28 @@
   },
   "scripts": {
     "skyux": "skyux",
-    "test": "skyux test && skyux e2e && skyux build && npm run build",
+    "test": "skyux test --coverage library",
+    "test:ci": "skyux test --platform travis --coverage library",
     "build": "skyux build-public-library",
     "start": "skyux serve"
   },
   "keywords": [],
   "author": "Blackbaud",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blackbaud/skyux-http.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blackbaud/skyux-http/issues"
+  },
+  "homepage": "https://github.com/blackbaud/skyux-http#readme",
   "peerDependencies": {
-    "@angular/animations": "^4.3.6",
-    "@angular/common": "^4.3.6",
-    "@angular/compiler": "^4.3.6",
-    "@angular/compiler-cli": "^4.3.6",
     "@angular/core": "^4.3.6",
-    "@angular/forms": "^4.3.6",
     "@angular/http": "^4.3.6",
-    "@angular/platform-browser": "^4.3.6",
-    "@angular/platform-browser-dynamic": "^4.3.6",
-    "@angular/router": "^4.3.6",
     "@blackbaud/auth-client": "^2.7.0",
-    "core-js": "^2.4.1",
-    "rxjs": "^5.4.3",
-    "zone.js": "^0.8.10"
+    "@skyux/builder-utils": ">=3.0.0-alpha.0",
+    "rxjs": "^5.4.3"
   },
   "devDependencies": {
     "@angular/animations": "4.3.6",
@@ -44,8 +44,9 @@
     "@angular/platform-browser-dynamic": "4.3.6",
     "@angular/router": "4.3.6",
     "@blackbaud/auth-client": "2.7.0",
-    "@blackbaud/skyux-design-tokens": "0.0.8",
     "@blackbaud/skyux-builder": "blackbaud/skyux-builder#rc-2.0.0",
+    "@skyux/builder-utils": "3.0.0-alpha.0",
+    "@skyux/theme": "3.0.0-alpha.4",
     "core-js": "2.4.1",
     "normalize-scss": "5.0.3",
     "rxjs": "5.4.3",

@@ -2,9 +2,6 @@ language: node_js
 sudo: required
 dist: trusty
 
-before_install:
-  - npm install -g @blackbaud/skyux-cli
-
 git:
   depth: 10
 
@@ -16,3 +13,20 @@ branches:
 cache:
   directories:
     - node_modules
+
+before_install:
+  - npm i -g npm@6.0.1
+  - npm install -g @blackbaud/skyux-cli
+
+install:
+  - npm install
+  - npm install blackbaud/skyux-builder-config
+
+script:
+  - npm run test:ci
+
+after_script:
+  - bash <(curl -s https://blackbaud.github.io/skyux-travis/library-after-script.sh)
+
+after_success:
+  - bash <(curl -s https://blackbaud.github.io/skyux-travis/library-after-success.sh)
