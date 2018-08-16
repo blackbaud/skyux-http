@@ -30,12 +30,12 @@ import 'rxjs/add/operator/mergeMap';
 import {
   SkyAuthTokenProvider
 } from './auth-token-provider';
+
 /**
  * Makes authenticated web requests to Blackbaud web services using a BBID token.
  */
 @Injectable()
 export class SkyAuthHttp extends Http {
-
   private permissionScope: string;
 
   constructor(
@@ -58,7 +58,6 @@ export class SkyAuthHttp extends Http {
     // so this chainable method just creates a new instance of SkyAuthHttp with a permissionScope
     // property set.  When chained, the end call would look something like this:
     // http.withScope('abc').get(url);
-
     const http = new SkyAuthHttp(
       this.backend,
       this.defaultOptions,
@@ -81,13 +80,17 @@ export class SkyAuthHttp extends Http {
     options?: RequestOptionsArgs
   ): Observable<Response> {
     const tokenArgs: BBAuthGetTokenArgs = {};
-    const leId: string = this.getLeId();
+    const leId = this.getLeId();
+    const envId = this.getEnvId();
 
-    // See if this call was chained to withScope(), and if so, provide it when
-    // retrieving a token.
+    // See if this call was chained to withScope(), and if so,
+    // provide it when retrieving a token.
     if (this.permissionScope) {
-      tokenArgs.envId = this.getEnvId();
       tokenArgs.permissionScope = this.permissionScope;
+    }
+
+    if (envId) {
+      tokenArgs.envId = envId;
     }
 
     if (leId) {
@@ -121,11 +124,11 @@ export class SkyAuthHttp extends Http {
       });
   }
 
-  private getEnvId() {
+  private getEnvId(): string {
     return this.skyAppConfig.runtime.params.get('envid');
   }
 
-  private getLeId() {
+  private getLeId(): string {
     return this.skyAppConfig.runtime.params.get('leid');
   }
 }
