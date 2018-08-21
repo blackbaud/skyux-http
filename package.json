@@ -1,6 +1,6 @@
 {
   "name": "@skyux/http",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "SKY UX HTTP",
   "main": "bundles/bundle.umd.js",
   "module": "index.ts",
@@ -29,7 +29,7 @@
     "@angular/core": "^4.3.6",
     "@angular/http": "^4.3.6",
     "@blackbaud/auth-client": "^2.7.0",
-    "@skyux/builder-utils": ">=3.0.0-alpha.0",
+    "@skyux/config": ">=3.0.0-alpha.0",
     "rxjs": "^5.4.3"
   },
   "devDependencies": {
@@ -46,7 +46,7 @@
     "@blackbaud/auth-client": "2.7.0",
     "@blackbaud/skyux": "2.19.0",
     "@blackbaud/skyux-builder": "1.19.3",
-    "@skyux/builder-utils": "3.0.0-alpha.3",
+    "@skyux/config": "3.0.0-alpha.0",
     "core-js": "2.4.1",
     "rxjs": "5.4.3",
     "ts-node": "3.0.4",
