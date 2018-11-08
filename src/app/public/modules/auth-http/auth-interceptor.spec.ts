@@ -1,13 +1,11 @@
-import {
-  SkyAuthInterceptor
-} from './auth-interceptor';
+//#region imports
 
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpSentEvent,
   HttpEventType,
-  HttpParams
+  HttpHandler,
+  HttpParams,
+  HttpRequest,
+  HttpSentEvent
 } from '@angular/common/http';
 
 import {
@@ -17,9 +15,15 @@ import {
 import 'rxjs/add/observable/of';
 
 import {
+  SkyAuthInterceptor
+} from './auth-interceptor';
+
+import {
   SKY_AUTH_PARAM_AUTH,
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
+
+//#endregion
 
 class MockHttpHandler extends HttpHandler {
   public handle(req: HttpRequest<any>) {

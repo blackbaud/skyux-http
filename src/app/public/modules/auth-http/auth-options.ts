@@ -1,5 +1,6 @@
 import {
-  HttpParams, HttpHeaders
+  HttpHeaders,
+  HttpParams
 } from '@angular/common/http';
 
 import {

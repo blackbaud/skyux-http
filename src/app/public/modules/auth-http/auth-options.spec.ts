@@ -1,7 +1,14 @@
+//#region imports
+
+import {
+  HttpParams
+} from '@angular/common/http';
+
 import {
   skyAuthHttpOptions
 } from './auth-options';
-import { HttpParams } from '@angular/common/http';
+
+//#endregion
 
 describe('Auth options', () => {
 

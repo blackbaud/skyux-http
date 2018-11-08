@@ -1,11 +1,13 @@
+//#region imports
+
 import {
   Injectable
 } from '@angular/core';
 
 import {
   HttpEvent,
-  HttpInterceptor,
   HttpHandler,
+  HttpInterceptor,
   HttpRequest
 } from '@angular/common/http';
 
@@ -28,6 +30,8 @@ import {
   SKY_AUTH_PARAM_AUTH,
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
+
+//#endregion
 
 function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   /* istanbul ignore else */
