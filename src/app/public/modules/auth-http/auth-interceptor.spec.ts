@@ -26,7 +26,7 @@ import {
 //#endregion
 
 class MockHttpHandler extends HttpHandler {
-  public handle(req: HttpRequest<any>) {
+  public handle() {
     return Observable.of({
       type: HttpEventType.Sent
     } as HttpSentEvent);
