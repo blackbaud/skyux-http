@@ -34,6 +34,9 @@ import {
 //#endregion
 
 function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
+  // The if statement here is just a sanity check; it appears that by the time
+  // this interceptor is called, the params property is always defined, even if
+  // it's not provided when the HTTP request is created.
   /* istanbul ignore else */
   if (request.params) {
     request = request.clone(
