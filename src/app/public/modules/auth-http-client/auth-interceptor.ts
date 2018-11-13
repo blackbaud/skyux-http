@@ -24,7 +24,7 @@ import {
 
 import {
   SkyAuthTokenProvider
-} from './auth-token-provider';
+} from '../auth-http/auth-token-provider';
 
 import {
   SKY_AUTH_PARAM_AUTH,
