@@ -28,9 +28,12 @@
     "@blackbaud/auth-client": "^2.7.0",
     "@skyux/config": "^3.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "jwt-decode": "2.2.0"
+  },
   "devDependencies": {
     "@blackbaud/skyux": "2.30.0",
-    "@blackbaud/skyux-builder": "1.29.0"
+    "@blackbaud/skyux-builder": "1.29.0",
+    "@types/jwt-decode": "2.2.1"
   }
 }
