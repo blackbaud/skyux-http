@@ -1,3 +1,7 @@
+# 3.3.0 (2019-05-07)
+
+- Added methods to `SkyAuthTokenProvider` for getting a decoded token.  This allows consumers to access properties like the user's current zone in order to make a request to the appropriate zone endpoint. [#17](https://github.com/blackbaud/skyux-http/pull/17)
+
 # 3.2.0 (2018-11-19)
 
 - Updated peer dependencies to support Angular versions greater than `4.3.6`. [#13](https://github.com/blackbaud/skyux-http/pull/13)
