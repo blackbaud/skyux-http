@@ -1,3 +1,8 @@
+# 3.4.0 (2019-05-29)
+
+- Added module for unit testing services that use auth interceptor. [#19](https://github.com/blackbaud/skyux-http/pull/19)
+- Added `skyAuthHttpJsonOptions()` function to enforce a `responseType` of `json`.  This ensures the correct type is inferred when used in conjection with the generic methods on Angular's `HttpClient`. [#20](https://github.com/blackbaud/skyux-http/pull/20)
+
 # 3.3.0 (2019-05-07)
 
 - Added methods to `SkyAuthTokenProvider` to get a decoded token.  This enables consumers to access properties such as the user's current zone to make requests to the appropriate zone endpoint. [#17](https://github.com/blackbaud/skyux-http/pull/17)
