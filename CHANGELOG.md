@@ -1,6 +1,6 @@
 # 3.4.1 (2019-05-30)
 
-- Fixed return type for `skyAuthHttpJsonOptions()`. [#22](https://github.com/blackbaud/skyux-http/pull/22)
+- Fixed the return type for `skyAuthHttpJsonOptions()`. [#22](https://github.com/blackbaud/skyux-http/pull/22)
 
 # 3.4.0 (2019-05-29)
 
