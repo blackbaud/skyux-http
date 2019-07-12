@@ -15,6 +15,10 @@ import {
 import 'rxjs/add/observable/of';
 
 import {
+  SkyAuthToken
+} from '../auth-http';
+
+import {
   SkyAuthTokenContextArgs
 } from '../auth-http/auth-token-context-args';
 
@@ -40,7 +44,7 @@ class MockHttpHandler extends HttpHandler {
 describe('Auth interceptor', () => {
   let mockTokenProvider: any;
 
-  function createInteceptor(envId?: string, leId?: string, url?: string) {
+  function createInteceptor(envId?: string, leId?: string, getUrlResult?: string) {
     return new SkyAuthInterceptor(
       mockTokenProvider,
       {
@@ -56,17 +60,17 @@ describe('Auth interceptor', () => {
                   return undefined;
               }
             },
-            getUrl: () => url || 'https://example.com/get/'
+            getUrl: (url: string) => getUrlResult || url || 'https://example.com/get/'
           }
         } as any,
         skyux: {}
       });
   }
 
-  function createRequest(params?: HttpParams) {
+  function createRequest(params?: HttpParams, url?: string) {
     const request = new HttpRequest(
       'GET',
-      'https://example.com/get/',
+      url || 'https://example.com/get/',
       {
         params: params
       }
@@ -131,7 +135,12 @@ describe('Auth interceptor', () => {
     mockTokenProvider = {
       getContextToken: jasmine.createSpy('getContextToken')
         .and
-        .returnValue(Promise.resolve('abc'))
+        .returnValue(Promise.resolve('abc')),
+      decodeToken: (token: string): SkyAuthToken => {
+        return {
+          '1bb.zone': 'p-can01'
+        };
+      }
     };
   });
 
@@ -176,6 +185,40 @@ describe('Auth interceptor', () => {
 
   it('should apply the appropriate legal entity context', (done) => {
     validateContext(undefined, 'abc', undefined, 'https://example.com/get/?leid=abc', done);
+  });
+
+  it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      new HttpParams()
+          .set(SKY_AUTH_PARAM_AUTH, 'true'),
+      '1bb://eng-hub00-pusa01/version'
+    );
+
+    const next = new MockHttpHandler();
+    validateAuthRequest(next, done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should convert tokenized urls and get zone from the token.', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      new HttpParams()
+          .set(SKY_AUTH_PARAM_AUTH, 'true'),
+      '1bb://eng-hub00/version'
+    );
+
+    const next = new MockHttpHandler();
+    validateAuthRequest(next, done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pcan01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
   });
 
 });
