@@ -36,3 +36,6 @@ screenshots-diff-local
 *.ngsummary.json
 yarn.lock
 package-lock.json
+
+# IntelliJ files
+.idea
