@@ -1,4 +1,4 @@
-export class MockSkyAppConfig {
+export class SkyMockAppConfig {
 
   public runtime = {
     app: {

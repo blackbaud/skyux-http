@@ -23,8 +23,8 @@ import {
 } from './auth-http-testing-controller';
 
 import {
-  MockSkyAppConfig
-} from './mock-sky-app-config';
+  SkyMockAppConfig
+} from './mock-app-config';
 
 /**
  * Overrides the default token logic in `SkyAuthHttpInterceptor` so code that
@@ -42,7 +42,7 @@ import {
     },
     {
       provide: SkyAppConfig,
-      useClass: MockSkyAppConfig
+      useClass: SkyMockAppConfig
     }
   ]
 })
