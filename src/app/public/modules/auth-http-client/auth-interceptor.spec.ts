@@ -1,87 +1,48 @@
 //#region imports
 
-import {
-  HttpEventType,
-  HttpHandler,
-  HttpParams,
-  HttpRequest,
-  HttpSentEvent
-} from '@angular/common/http';
-
-import {
-  Observable
-} from 'rxjs/Observable';
-
+import { HttpHandler, HttpParams, HttpRequest } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
+import { SkyAppConfig, SkyAppRuntimeConfigParams } from '@skyux/config';
 import 'rxjs/add/observable/of';
-
-import {
-  SkyAuthTokenContextArgs
-} from '../auth-http/auth-token-context-args';
-
-import {
-  SkyAuthInterceptor
-} from './auth-interceptor';
-
-import {
-  SKY_AUTH_PARAM_AUTH,
-  SKY_AUTH_PARAM_PERMISSION_SCOPE
-} from './auth-interceptor-params';
+import { Observable } from 'rxjs/Observable';
+import { SkyAuthTokenContextArgs, SkyAuthTokenProvider } from '../auth-http';
+import { DEFAULT_PERMISSION_SCOPE, SkyAuthInterceptor } from './auth-interceptor';
+import { SKY_AUTH_PARAM_AUTH, SKY_AUTH_PARAM_PERMISSION_SCOPE } from './auth-interceptor-params';
 
 //#endregion
 
-class MockHttpHandler extends HttpHandler {
-  public handle() {
-    return Observable.of({
-      type: HttpEventType.Sent
-    } as HttpSentEvent);
-  }
-}
+export type Spy<T> = { [Method in keyof T]: jasmine.Spy; };
 
 describe('Auth interceptor', () => {
-  let mockTokenProvider: any;
+  let mockTokenProvider: Spy<SkyAuthTokenProvider> = jasmine.createSpyObj('SkyAuthTokenProvider', ['getContextToken']);
+  let mockRuntimeConfigParameters: Spy<SkyAppRuntimeConfigParams> = jasmine.createSpyObj('RuntimeConfigParameters', ['get', 'getUrl']);
+  let config = {
+    runtime: {
+      params: mockRuntimeConfigParameters
+    } as any,
+    skyux: {}
+  };
+  let next: Spy<HttpHandler> = jasmine.createSpyObj('HttpHandler', ['handle']);
 
-  function createInteceptor(envId?: string, leId?: string, url?: string) {
-    return new SkyAuthInterceptor(
-      mockTokenProvider,
-      {
-        runtime: {
-          params: {
-            get: (name: string) => {
-              switch (name) {
-                case 'envid':
-                  return envId;
-                case 'leid':
-                  return leId;
-                default:
-                  return undefined;
-              }
-            },
-            getUrl: () => url || 'https://example.com/get/'
-          }
-        } as any,
-        skyux: {}
-      });
-  }
-
-  function createRequest(params?: HttpParams) {
-    const request = new HttpRequest(
+  function createRequest(isSkayAuth?: boolean, permissionScope?: string) {
+    let params: HttpParams = new HttpParams();
+    if (isSkayAuth) {
+      params = params.set(SKY_AUTH_PARAM_AUTH, 'true');
+    }
+    if (permissionScope) {
+      params = params.set(SKY_AUTH_PARAM_PERMISSION_SCOPE, permissionScope);
+    }
+    return new HttpRequest(
       'GET',
       'https://example.com/get/',
       {
         params: params
       }
     );
-
-    return request;
   }
 
-  function validateAuthRequest(
-    next: MockHttpHandler,
-    done: DoneFn,
-    cb: (authRequest: HttpRequest<any>) => void
-  ) {
-    spyOn(next, 'handle').and.callFake(
-      (authRequest: HttpRequest<any>) => {
+  function validateAuthRequest(done: DoneFn, cb: (authRequest: HttpRequest<any>) => void) {
+    next.handle.and.callFake((authRequest: HttpRequest<any>) => {
         cb(authRequest);
         done();
         return Observable.of('');
@@ -96,21 +57,26 @@ describe('Auth interceptor', () => {
     expectedUrl: string,
     done: DoneFn
   ) {
-    const interceptor = createInteceptor(envId, leId, expectedUrl);
+    mockRuntimeConfigParameters.get.and.callFake((name: any) => {
+      switch (name) {
+        case 'envid':
+          return envId;
+        case 'leid':
+          return leId;
+        default:
+          return undefined;
+      }
+    });
+    mockRuntimeConfigParameters.getUrl.and.callFake(() => {
+      return expectedUrl || 'https://example.com/get/';
+    });
 
-    let params = new HttpParams().set(SKY_AUTH_PARAM_AUTH, 'true');
+    const request = createRequest(true, permissionScope);
 
-    if (permissionScope) {
-      params = params.set(SKY_AUTH_PARAM_PERMISSION_SCOPE, permissionScope);
-    }
-
-    const request = createRequest(params);
-
-    const next = new MockHttpHandler();
-
+    const interceptor: SkyAuthInterceptor = TestBed.get(SkyAuthInterceptor);
     interceptor.intercept(request, next);
 
-    validateAuthRequest(next, done, (authRequest) => {
+    validateAuthRequest(done, (authRequest) => {
       expect(authRequest.url).toBe(expectedUrl);
     });
 
@@ -128,38 +94,31 @@ describe('Auth interceptor', () => {
   }
 
   beforeEach(() => {
-    mockTokenProvider = {
-      getContextToken: jasmine.createSpy('getContextToken')
-        .and
-        .returnValue(Promise.resolve('abc'))
-    };
+    mockTokenProvider.getContextToken.and.returnValue(Promise.resolve('abc'));
+
+    TestBed.configureTestingModule({
+      providers: [
+        {provide: SkyAuthTokenProvider, useValue: mockTokenProvider},
+        {provide: SkyAppConfig, useValue: config},
+        SkyAuthInterceptor
+      ]
+    });
   });
 
   it('should pass through the existing request when not an auth request', () => {
-    const interceptor = createInteceptor();
-
+    const interceptor: SkyAuthInterceptor = TestBed.get(SkyAuthInterceptor);
     const request = createRequest();
-
-    const next = new MockHttpHandler();
-
-    const handleSpy = spyOn(next, 'handle');
+    next.handle.and.stub();
 
     interceptor.intercept(request, next);
 
-    expect(handleSpy).toHaveBeenCalledWith(request);
+    expect(next.handle).toHaveBeenCalledWith(request);
   });
 
   it('should add a token to the request if the sky_auth parameter is set', (done) => {
-    const interceptor = createInteceptor();
-
-    const request = createRequest(
-      new HttpParams()
-        .set(SKY_AUTH_PARAM_AUTH, 'true')
-    );
-
-    const next = new MockHttpHandler();
-
-    validateAuthRequest(next, done, (authRequest) => {
+    const interceptor: SkyAuthInterceptor = TestBed.get(SkyAuthInterceptor);
+    const request = createRequest(true);
+    validateAuthRequest(done, (authRequest) => {
       expect(authRequest.headers.get('Authorization')).toBe('Bearer abc');
     });
 
@@ -178,4 +137,58 @@ describe('Auth interceptor', () => {
     validateContext(undefined, 'abc', undefined, 'https://example.com/get/?leid=abc', done);
   });
 
+  it('should add the default permission scope if it is injected and a scope is not passed in',
+    (done) => {
+      const defaultPermissionScope = 'default-permission-scope';
+      TestBed.configureTestingModule({
+        providers: [
+          {provide: DEFAULT_PERMISSION_SCOPE, useValue: defaultPermissionScope}
+          ]
+      });
+      const interceptor = TestBed.get(SkyAuthInterceptor);
+      const request = createRequest(true);
+      const expectedTokenArgs: SkyAuthTokenContextArgs = {permissionScope: defaultPermissionScope};
+      validateAuthRequest(done, (authRequest) => expect(authRequest.headers.get('Authorization')).toBe('Bearer abc'));
+
+      interceptor.intercept(request, next).subscribe(() => {});
+
+      expect(mockTokenProvider.getContextToken).toHaveBeenCalledWith(jasmine.objectContaining(expectedTokenArgs));
+    });
+
+  it('should not add the default permission scope if it is not injected',
+    (done) => {
+      const interceptor = TestBed.get(SkyAuthInterceptor);
+      const request = createRequest(true);
+
+      validateAuthRequest(done, (authRequest) => expect(authRequest.headers.get('Authorization')).toBe('Bearer abc'));
+
+      interceptor.intercept(request, next).subscribe(() => {});
+
+      const expectedTokenArgs: SkyAuthTokenContextArgs = {};
+
+      expect(mockTokenProvider.getContextToken).toHaveBeenCalledWith(
+        jasmine.objectContaining(expectedTokenArgs)
+      );
+    });
+
+  it('should not add the default permission scope if it is injected and a scope is passed in',
+    (done) => {
+      TestBed.configureTestingModule({
+        providers: [
+          {provide: DEFAULT_PERMISSION_SCOPE, useValue: 'default-permission-scope'}
+        ]
+      });
+      const interceptor = TestBed.get(SkyAuthInterceptor);
+      const specifiedPermissionScope = 'specified-permission-scope';
+      const request = createRequest(true, specifiedPermissionScope);
+      validateAuthRequest(done, (authRequest) => expect(authRequest.headers.get('Authorization')).toBe('Bearer abc'));
+      const expectedTokenArgs: SkyAuthTokenContextArgs = {};
+      expectedTokenArgs.permissionScope = specifiedPermissionScope;
+
+      interceptor.intercept(request, next).subscribe(() => {});
+
+      expect(mockTokenProvider.getContextToken).toHaveBeenCalledWith(
+        jasmine.objectContaining(expectedTokenArgs)
+      );
+    });
 });

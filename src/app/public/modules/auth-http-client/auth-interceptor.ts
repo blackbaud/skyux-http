@@ -1,7 +1,8 @@
 //#region imports
 
 import {
-  Injectable
+  Inject,
+  Injectable, InjectionToken, Optional
 } from '@angular/core';
 
 import {
@@ -52,11 +53,14 @@ function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   return request;
 }
 
+export const DEFAULT_PERMISSION_SCOPE = new InjectionToken<string>('default_permission_scope');
+
 @Injectable()
 export class SkyAuthInterceptor implements HttpInterceptor {
   constructor(
     private tokenProvider: SkyAuthTokenProvider,
-    private config: SkyAppConfig
+    private config: SkyAppConfig,
+    @Inject(DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope: string
   ) { }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
