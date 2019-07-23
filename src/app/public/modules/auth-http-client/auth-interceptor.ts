@@ -1,11 +1,6 @@
 //#region imports
 
 import {
-  Inject,
-  Injectable, InjectionToken, Optional
-} from '@angular/core';
-
-import {
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -13,10 +8,17 @@ import {
 } from '@angular/common/http';
 
 import {
+  Inject,
+  Injectable,
+  Optional
+} from '@angular/core';
+
+import {
   Observable
 } from 'rxjs/Observable';
 
 import 'rxjs/add/observable/fromPromise';
+
 import 'rxjs/add/operator/switchMap';
 
 import {
@@ -27,6 +29,10 @@ import {
   SkyAuthTokenContextArgs,
   SkyAuthTokenProvider
 } from '../auth-http';
+
+import {
+  SKY_AUTH_DEFAULT_PERMISSION_SCOPE
+} from './auth-interceptor-default-permission-scope';
 
 import {
   SKY_AUTH_PARAM_AUTH,
@@ -53,14 +59,12 @@ function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   return request;
 }
 
-export const DEFAULT_PERMISSION_SCOPE = new InjectionToken<string>('default_permission_scope');
-
 @Injectable()
 export class SkyAuthInterceptor implements HttpInterceptor {
   constructor(
     private tokenProvider: SkyAuthTokenProvider,
     private config: SkyAppConfig,
-    @Inject(DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope: string
+    @Inject(SKY_AUTH_DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope: string
   ) { }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -85,11 +89,7 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     if (auth) {
       const tokenContextArgs: SkyAuthTokenContextArgs = {};
 
-      if (permissionScope) {
-        tokenContextArgs.permissionScope = permissionScope;
-      } else if (this.defaultPermissionScope) {
-        tokenContextArgs.permissionScope = this.defaultPermissionScope;
-      }
+      tokenContextArgs.permissionScope = permissionScope || this.defaultPermissionScope;
 
       return Observable
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))

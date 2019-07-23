@@ -1,17 +1,47 @@
 //#region imports
 
-import { HttpHandler, HttpParams, HttpRequest } from '@angular/common/http';
-import { TestBed } from '@angular/core/testing';
-import { SkyAppConfig, SkyAppRuntimeConfigParams } from '@skyux/config';
+import {
+  HttpHandler,
+  HttpParams,
+  HttpRequest
+} from '@angular/common/http';
+
+import {
+  TestBed
+} from '@angular/core/testing';
+
+import {
+  Observable
+} from 'rxjs/Observable';
+
 import 'rxjs/add/observable/of';
-import { Observable } from 'rxjs/Observable';
-import { SkyAuthTokenContextArgs, SkyAuthTokenProvider } from '../auth-http';
-import { DEFAULT_PERMISSION_SCOPE, SkyAuthInterceptor } from './auth-interceptor';
-import { SKY_AUTH_PARAM_AUTH, SKY_AUTH_PARAM_PERMISSION_SCOPE } from './auth-interceptor-params';
+
+import {
+  SkyAppConfig,
+  SkyAppRuntimeConfigParams
+} from '@skyux/config';
+
+import {
+  SkyAuthTokenContextArgs,
+  SkyAuthTokenProvider
+} from '../auth-http';
+
+import {
+  SkyAuthInterceptor
+} from './auth-interceptor';
+
+import {
+  SKY_AUTH_DEFAULT_PERMISSION_SCOPE
+} from './auth-interceptor-default-permission-scope';
+
+import {
+  SKY_AUTH_PARAM_AUTH,
+  SKY_AUTH_PARAM_PERMISSION_SCOPE
+} from './auth-interceptor-params';
 
 //#endregion
 
-export type Spy<T> = { [Method in keyof T]: jasmine.Spy; };
+type Spy<T> = { [Method in keyof T]: jasmine.Spy; };
 
 describe('Auth interceptor', () => {
   let mockTokenProvider: Spy<SkyAuthTokenProvider> = jasmine.createSpyObj('SkyAuthTokenProvider', ['getContextToken']);
@@ -24,9 +54,9 @@ describe('Auth interceptor', () => {
   };
   let next: Spy<HttpHandler> = jasmine.createSpyObj('HttpHandler', ['handle']);
 
-  function createRequest(isSkayAuth?: boolean, permissionScope?: string) {
+  function createRequest(isSkyAuth?: boolean, permissionScope?: string) {
     let params: HttpParams = new HttpParams();
-    if (isSkayAuth) {
+    if (isSkyAuth) {
       params = params.set(SKY_AUTH_PARAM_AUTH, 'true');
     }
     if (permissionScope) {
@@ -142,7 +172,7 @@ describe('Auth interceptor', () => {
       const defaultPermissionScope = 'default-permission-scope';
       TestBed.configureTestingModule({
         providers: [
-          {provide: DEFAULT_PERMISSION_SCOPE, useValue: defaultPermissionScope}
+          {provide: SKY_AUTH_DEFAULT_PERMISSION_SCOPE, useValue: defaultPermissionScope}
           ]
       });
       const interceptor = TestBed.get(SkyAuthInterceptor);
@@ -175,7 +205,7 @@ describe('Auth interceptor', () => {
     (done) => {
       TestBed.configureTestingModule({
         providers: [
-          {provide: DEFAULT_PERMISSION_SCOPE, useValue: 'default-permission-scope'}
+          {provide: SKY_AUTH_DEFAULT_PERMISSION_SCOPE, useValue: 'default-permission-scope'}
         ]
       });
       const interceptor = TestBed.get(SkyAuthInterceptor);
