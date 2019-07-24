@@ -6,4 +6,5 @@ import {
 
 //#endregion
 
-export const SKY_AUTH_DEFAULT_PERMISSION_SCOPE = new InjectionToken<string>('sky_auth_default_permission_scope');
+export const SKY_AUTH_DEFAULT_PERMISSION_SCOPE
+  = new InjectionToken<string>('sky_auth_default_permission_scope');
