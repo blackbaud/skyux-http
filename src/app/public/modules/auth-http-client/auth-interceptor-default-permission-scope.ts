@@ -1,6 +1,8 @@
 //#region imports
 
-import { InjectionToken } from '@angular/core';
+import {
+  InjectionToken
+} from '@angular/core';
 
 //#endregion
 

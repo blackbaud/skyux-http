@@ -44,15 +44,10 @@ import {
 type Spy<T> = { [Method in keyof T]: jasmine.Spy; };
 
 describe('Auth interceptor', () => {
-  let mockTokenProvider: Spy<SkyAuthTokenProvider> = jasmine.createSpyObj('SkyAuthTokenProvider', ['getContextToken']);
-  let mockRuntimeConfigParameters: Spy<SkyAppRuntimeConfigParams> = jasmine.createSpyObj('RuntimeConfigParameters', ['get', 'getUrl']);
-  let config = {
-    runtime: {
-      params: mockRuntimeConfigParameters
-    } as any,
-    skyux: {}
-  };
-  let next: Spy<HttpHandler> = jasmine.createSpyObj('HttpHandler', ['handle']);
+  let mockTokenProvider: Spy<SkyAuthTokenProvider>;
+  let mockRuntimeConfigParameters: Spy<SkyAppRuntimeConfigParams>;
+  let config: SkyAppConfig;
+  let next: Spy<HttpHandler>;
 
   function createRequest(isSkyAuth?: boolean, permissionScope?: string) {
     let params: HttpParams = new HttpParams();
@@ -124,7 +119,16 @@ describe('Auth interceptor', () => {
   }
 
   beforeEach(() => {
+    mockTokenProvider = jasmine.createSpyObj('SkyAuthTokenProvider', ['getContextToken']);
     mockTokenProvider.getContextToken.and.returnValue(Promise.resolve('abc'));
+    mockRuntimeConfigParameters = jasmine.createSpyObj('RuntimeConfigParameters', ['get', 'getUrl']);
+    config = {
+      runtime: {
+        params: mockRuntimeConfigParameters
+      } as any,
+      skyux: {}
+    };
+    next = jasmine.createSpyObj('HttpHandler', ['handle']);
 
     TestBed.configureTestingModule({
       providers: [
