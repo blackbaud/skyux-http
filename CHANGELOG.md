@@ -1,6 +1,6 @@
 # 3.5.0 (2019-07-25)
 
-- Added feature to allow applications to provide a default permission scope to `SkyAuthInterceptor`. [#32](https://github.com/blackbaud/skyux-http/pull/32) (Thanks [@Blackbaud-JasonBodnar](https://github.com/Blackbaud-JasonBodnar)!)
+- Added a feature to allow applications to provide a default permission scope to `SkyAuthInterceptor`. [#32](https://github.com/blackbaud/skyux-http/pull/32) (Thanks [@Blackbaud-JasonBodnar](https://github.com/Blackbaud-JasonBodnar)!)
 - Added missing imports and providers to `SkyAuthHttpClientTestingModule`. [#29](https://github.com/blackbaud/skyux-http/pull/29)
 
 # 3.4.1 (2019-05-30)
