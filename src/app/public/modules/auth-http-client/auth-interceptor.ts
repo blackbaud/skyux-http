@@ -89,7 +89,11 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     if (auth) {
       const tokenContextArgs: SkyAuthTokenContextArgs = {};
 
-      tokenContextArgs.permissionScope = permissionScope || this.defaultPermissionScope;
+      if (permissionScope) {
+        tokenContextArgs.permissionScope = permissionScope;
+      } else if (this.defaultPermissionScope) {
+        tokenContextArgs.permissionScope = this.defaultPermissionScope;
+      }
 
       return Observable
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
