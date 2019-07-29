@@ -93,12 +93,11 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
           const decodedToken = this.tokenProvider.decodeToken(token);
-          const zone = decodedToken['1bb.zone'] || '';
           return Observable
             .fromPromise(
               BBAuth.getUrl(request.url,
               {
-                zone: zone.replace('-', '')
+                zone: decodedToken['1bb.zone']
               })
             )
             .switchMap((url) => {
