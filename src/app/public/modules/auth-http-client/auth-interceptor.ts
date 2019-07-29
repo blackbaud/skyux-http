@@ -1,5 +1,4 @@
 //#region imports
-
 import {
   HttpEvent,
   HttpHandler,
@@ -14,16 +13,17 @@ import {
 } from '@angular/core';
 
 import {
-  Observable
-} from 'rxjs/Observable';
-
-import 'rxjs/add/observable/fromPromise';
-
-import 'rxjs/add/operator/switchMap';
-
-import {
   SkyAppConfig
 } from '@skyux/config';
+
+import {
+  from as observableFrom,
+  Observable
+} from 'rxjs';
+
+import {
+  switchMap
+} from 'rxjs/operators';
 
 import {
   SkyAuthTokenContextArgs,
@@ -95,9 +95,8 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         tokenContextArgs.permissionScope = this.defaultPermissionScope;
       }
 
-      return Observable
-        .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
-        .switchMap((token) => {
+      return observableFrom(this.tokenProvider.getContextToken(tokenContextArgs)).pipe(
+        switchMap((token) => {
           let authRequest = request.clone({
             setHeaders: {
               Authorization: `Bearer ${token}`
@@ -106,7 +105,7 @@ export class SkyAuthInterceptor implements HttpInterceptor {
           });
 
           return next.handle(authRequest);
-        });
+        }));
     }
 
     return next.handle(request);

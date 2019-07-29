@@ -1,5 +1,4 @@
 //#region imports
-
 import {
   HttpHandler,
   HttpParams,
@@ -11,15 +10,13 @@ import {
 } from '@angular/core/testing';
 
 import {
-  Observable
-} from 'rxjs/Observable';
-
-import 'rxjs/add/observable/of';
-
-import {
   SkyAppConfig,
   SkyAppRuntimeConfigParams
 } from '@skyux/config';
+
+import {
+  of as observableOf
+} from 'rxjs';
 
 import {
   SkyAuthTokenContextArgs,
@@ -81,7 +78,7 @@ describe('Auth interceptor', () => {
     next.handle.and.callFake((authRequest: HttpRequest<any>) => {
       cb(authRequest);
       done();
-      return Observable.of('');
+      return observableOf('');
     });
   }
 

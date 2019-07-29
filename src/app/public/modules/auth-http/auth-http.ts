@@ -21,17 +21,20 @@ import {
 } from '@skyux/config';
 
 import {
+  from as observableFrom,
   Observable
-} from 'rxjs/Observable';
+} from 'rxjs';
 
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/mergeMap';
+import {
+  mergeMap
+} from 'rxjs/operators';
 
 import {
   SkyAuthTokenProvider
 } from './auth-token-provider';
 /**
  * Makes authenticated web requests to Blackbaud web services using a BBID token.
+ * @deprecated Use `HttpClient` with `skyAuthHttpOptions()`.
  */
 @Injectable()
 export class SkyAuthHttp extends Http {
@@ -94,8 +97,8 @@ export class SkyAuthHttp extends Http {
       tokenArgs.leId = leId;
     }
 
-    return Observable.fromPromise(this.authTokenProvider.getToken(tokenArgs))
-      .flatMap((token: string) => {
+    return observableFrom(this.authTokenProvider.getToken(tokenArgs)).pipe(
+      mergeMap((token: string) => {
         let authOptions: Request | RequestOptionsArgs;
 
         if (url instanceof Request) {
@@ -118,7 +121,7 @@ export class SkyAuthHttp extends Http {
         authOptions.headers.set('Authorization', 'Bearer ' + token);
 
         return super.request(url, authOptions);
-      });
+      }));
   }
 
   private getEnvId() {
