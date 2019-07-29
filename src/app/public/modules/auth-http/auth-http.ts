@@ -121,7 +121,8 @@ export class SkyAuthHttp extends Http {
         authOptions.headers.set('Authorization', 'Bearer ' + token);
 
         return super.request(url, authOptions);
-      }));
+      })
+    );
   }
 
   private getEnvId() {

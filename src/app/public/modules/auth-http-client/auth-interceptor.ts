@@ -105,7 +105,8 @@ export class SkyAuthInterceptor implements HttpInterceptor {
           });
 
           return next.handle(authRequest);
-        }));
+        })
+      );
     }
 
     return next.handle(request);
