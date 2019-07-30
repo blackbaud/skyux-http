@@ -22,6 +22,14 @@ import {
 } from '@skyux/config';
 
 import {
+  SkyAuthToken
+} from '../auth-http';
+
+import {
+  SkyAuthTokenContextArgs
+} from '../auth-http/auth-token-context-args';
+
+import {
   SkyAuthTokenContextArgs,
   SkyAuthTokenProvider
 } from '../auth-http';
@@ -59,13 +67,37 @@ describe('Auth interceptor', () => {
       params = params.set(SKY_AUTH_PARAM_AUTH, 'true');
     }
 
+  function createInteceptor(envId?: string, leId?: string, getUrlResult?: string) {
+    return new SkyAuthInterceptor(
+      mockTokenProvider,
+      {
+        runtime: {
+          params: {
+            get: (name: string) => {
+              switch (name) {
+                case 'envid':
+                  return envId;
+                case 'leid':
+                  return leId;
+                default:
+                  return undefined;
+              }
+            },
+            getUrl: (url: string) => getUrlResult || url || 'https://example.com/get/'
+          }
+        } as any,
+        skyux: {}
+      });
+  }
+
+  function createRequest(params?: HttpParams, url?: string) {
     if (permissionScope) {
       params = params.set(SKY_AUTH_PARAM_PERMISSION_SCOPE, permissionScope);
     }
 
     const request = new HttpRequest(
       'GET',
-      'https://example.com/get/',
+      url || 'https://example.com/get/',
       {
         params: params
       }
@@ -130,13 +162,17 @@ describe('Auth interceptor', () => {
   }
 
   beforeEach(() => {
-    mockTokenProvider = jasmine.createSpyObj(
-      'SkyAuthTokenProvider',
-      ['getContextToken']
-    );
-
-    mockTokenProvider.getContextToken.and.returnValue(Promise.resolve('abc'));
-
+    mockTokenProvider = {
+      getContextToken: jasmine.createSpy('getContextToken')
+        .and
+        .returnValue(Promise.resolve('abc')),
+      decodeToken: (token: string): SkyAuthToken => {
+        return {
+          '1bb.zone': 'p-can01'
+        };
+      }
+    };
+    
     mockRuntimeConfigParameters = jasmine.createSpyObj(
       'RuntimeConfigParameters',
       ['get', 'getUrl']
@@ -198,6 +234,40 @@ describe('Auth interceptor', () => {
 
   it('should apply the appropriate legal entity context', (done) => {
     validateContext(undefined, 'abc', undefined, 'https://example.com/get/?leid=abc', done);
+  });
+
+  it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      new HttpParams()
+          .set(SKY_AUTH_PARAM_AUTH, 'true'),
+      '1bb://eng-hub00-pusa01/version'
+    );
+
+    const next = new MockHttpHandler();
+    validateAuthRequest(next, done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should convert tokenized urls and get zone from the token.', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      new HttpParams()
+          .set(SKY_AUTH_PARAM_AUTH, 'true'),
+      '1bb://eng-hub00/version'
+    );
+
+    const next = new MockHttpHandler();
+    validateAuthRequest(next, done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pcan01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
   });
 
   it('should add the default permission scope if it is injected and a scope is not passed in',

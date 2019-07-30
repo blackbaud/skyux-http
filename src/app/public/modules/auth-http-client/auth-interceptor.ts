@@ -22,6 +22,10 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/switchMap';
 
 import {
+  BBAuth
+} from '@blackbaud/auth-client';
+
+import {
   SkyAppConfig
 } from '@skyux/config';
 
@@ -98,14 +102,23 @@ export class SkyAuthInterceptor implements HttpInterceptor {
       return Observable
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
-          let authRequest = request.clone({
-            setHeaders: {
-              Authorization: `Bearer ${token}`
-            },
-            url: this.config.runtime.params.getUrl(request.url)
-          });
-
-          return next.handle(authRequest);
+          const decodedToken = this.tokenProvider.decodeToken(token);
+          return Observable
+            .fromPromise(
+              BBAuth.getUrl(request.url,
+              {
+                zone: decodedToken['1bb.zone']
+              })
+            )
+            .switchMap((url) => {
+              let authRequest = request.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${token}`
+                },
+                url: this.config.runtime.params.getUrl(url)
+              });
+              return next.handle(authRequest);
+            });
         });
     }
 
