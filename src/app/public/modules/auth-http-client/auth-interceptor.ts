@@ -68,7 +68,7 @@ export class SkyAuthInterceptor implements HttpInterceptor {
   constructor(
     private tokenProvider: SkyAuthTokenProvider,
     private config: SkyAppConfig,
-    @Inject(SKY_AUTH_DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope: string
+    @Inject(SKY_AUTH_DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope?: string
   ) { }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -91,12 +91,12 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     }
 
     if (auth) {
+      permissionScope = permissionScope || this.defaultPermissionScope;
+
       const tokenContextArgs: SkyAuthTokenContextArgs = {};
 
       if (permissionScope) {
         tokenContextArgs.permissionScope = permissionScope;
-      } else if (this.defaultPermissionScope) {
-        tokenContextArgs.permissionScope = this.defaultPermissionScope;
       }
 
       return Observable
