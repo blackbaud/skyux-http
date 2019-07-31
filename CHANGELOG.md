@@ -1,6 +1,6 @@
 # 3.6.0 (2019-07-31)
 
-- Added support for translating a 1BB tokenized URL to a zoned URL using the zone from the user's token. [#26](https://github.com/blackbaud/skyux-http/pull/26) (Thanks [@Blackbaud-JasonBodnar](https://github.com/Blackbaud-JonathanBell)!)
+- Added support for translating a 1BB tokenized URL to a zoned URL using the zone from the user's token. [#26](https://github.com/blackbaud/skyux-http/pull/26) (Thanks [@Blackbaud-JonathanBell](https://github.com/Blackbaud-JonathanBell)!)
 
 # 3.5.0 (2019-07-25)
 
