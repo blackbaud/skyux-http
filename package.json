@@ -1,6 +1,6 @@
 {
   "name": "@skyux/http",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "SKY UX HTTP",
   "main": "bundles/bundle.umd.js",
   "module": "index.ts",
@@ -24,7 +24,7 @@
   "peerDependencies": {
     "@angular/core": "^7.0.0",
     "@angular/http": "^7.0.0",
-    "@blackbaud/auth-client": "^2.7.0",
+    "@blackbaud/auth-client": "^2.17.1",
     "@skyux/config": "^4.0.0"
   },
   "dependencies": {
