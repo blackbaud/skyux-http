@@ -61,6 +61,7 @@
     "@skyux/router": "3.1.1",
     "@skyux/theme": "3.8.0",
     "@types/core-js": "2.5.2",
+    "@types/jwt-decode": "2.2.1",
     "codelyzer": "4.5.0",
     "core-js": "2.6.9",
     "rxjs": "6.5.3",
