@@ -10,6 +10,7 @@ import {
 import {
   TestBed
 } from '@angular/core/testing';
+import { BBAuthClientFactory } from '@skyux/auth-client-factory';
 
 import {
   Observable
@@ -39,7 +40,6 @@ import {
   SKY_AUTH_PARAM_AUTH,
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
-import { BBAuth } from '@blackbaud/auth-client';
 
 //#endregion
 
@@ -52,6 +52,10 @@ describe('Auth interceptor', () => {
   let next: Spy<HttpHandler>;
 
   function createInteceptor(envId?: string, leId?: string, getUrlResult?: string) {
+    return createInteceptorWithCommand(undefined, envId, leId, getUrlResult);
+  }
+
+  function createInteceptorWithCommand(command: string, envId?: string, leId?: string, getUrlResult?: string) {
     return new SkyAuthInterceptor(
       mockTokenProvider as any,
       {
@@ -68,7 +72,8 @@ describe('Auth interceptor', () => {
               }
             },
             getUrl: (url: string) => getUrlResult || url || 'https://example.com/get/'
-          }
+          },
+          command: command
         } as any,
         skyux: {}
       });
@@ -334,22 +339,14 @@ describe('Auth interceptor', () => {
       );
     });
 
-  fit('should pass HttpClient to getUrl if served locally', (done) => {
-    config.runtime.command = 'serve';
-    TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: SkyAppConfig,
-          useValue: config
-        }
-      ]
+  fit('should pass defined HttpClient to getUrl if served locally', (done) => {
+    const interceptor = createInteceptorWithCommand('serve');
+    const request = createRequest(true);
+
+    let authSpy = spyOn(BBAuthClientFactory.BBAuth, 'getUrl').and.callThrough();
+    interceptor.intercept(request, next).subscribe(() => {
+      expect(authSpy).toHaveBeenCalledWith(request.url, { zone: 'p-can01', client: new HttpClient(next)});
+      done();
     });
-    const interceptor = TestBed.get(SkyAuthInterceptor);
-    const request = createRequest(true, undefined, undefined);
-
-    let bbAuthSpy = jasmine.createSpyObj('BBAuthClientFactory', ['BBAuth']);
-    interceptor.intercept(request, next).subscribe(() => {});
-
-    expect(bbAuthSpy.BBAuth.getUrl).toHaveBeenCalledWith(request.url, { zone: 'p-can01', client: new HttpClient(next)});
   });
 });
