@@ -1,6 +1,7 @@
 //#region imports
 
 import {
+  HttpClient,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -103,12 +104,14 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
           const decodedToken = this.tokenProvider.decodeToken(token);
+          const argsMap: any = {
+            zone:  decodedToken['1bb.zone'],
+            client: this.config.runtime.command === 'serve' ? new HttpClient(next) : undefined
+          };
+
           return Observable
             .fromPromise(
-              BBAuthClientFactory.BBAuth.getUrl(request.url,
-              {
-                zone: decodedToken['1bb.zone']
-              })
+              BBAuthClientFactory.BBAuth.getUrl(request.url, argsMap)
             )
             .switchMap((url) => {
               let authRequest = request.clone({

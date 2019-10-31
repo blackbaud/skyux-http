@@ -1,6 +1,7 @@
 //#region imports
 
 import {
+  HttpClient,
   HttpHandler,
   HttpParams,
   HttpRequest
@@ -38,6 +39,7 @@ import {
   SKY_AUTH_PARAM_AUTH,
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
+import { BBAuth } from '@blackbaud/auth-client';
 
 //#endregion
 
@@ -331,4 +333,23 @@ describe('Auth interceptor', () => {
         jasmine.objectContaining(expectedTokenArgs)
       );
     });
+
+  fit('should pass HttpClient to getUrl if served locally', (done) => {
+    config.runtime.command = 'serve';
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: SkyAppConfig,
+          useValue: config
+        }
+      ]
+    });
+    const interceptor = TestBed.get(SkyAuthInterceptor);
+    const request = createRequest(true, undefined, undefined);
+
+    let bbAuthSpy = jasmine.createSpyObj('BBAuthClientFactory', ['BBAuth']);
+    interceptor.intercept(request, next).subscribe(() => {});
+
+    expect(bbAuthSpy.BBAuth.getUrl).toHaveBeenCalledWith(request.url, { zone: 'p-can01', client: new HttpClient(next)});
+  });
 });
