@@ -104,6 +104,8 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
           const decodedToken = this.tokenProvider.decodeToken(token);
+
+          // TODO make this not any once we've updated the interface
           const argsMap: any = {
             zone:  decodedToken['1bb.zone'],
             client: this.config.runtime.command === 'serve' ? new HttpClient(next) : undefined

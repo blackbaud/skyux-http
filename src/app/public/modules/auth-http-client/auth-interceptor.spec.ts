@@ -339,14 +339,16 @@ describe('Auth interceptor', () => {
       );
     });
 
-  fit('should pass defined HttpClient to getUrl if served locally', (done) => {
+  it('should pass defined HttpClient to getUrl if served locally', (done) => {
     const interceptor = createInteceptorWithCommand('serve');
-    const request = createRequest(true);
+    const request = createRequest(true, '1bb://eng-hub00/version');
 
     let authSpy = spyOn(BBAuthClientFactory.BBAuth, 'getUrl').and.callThrough();
-    interceptor.intercept(request, next).subscribe(() => {
+
+    validateAuthRequest(done, () => {
       expect(authSpy).toHaveBeenCalledWith(request.url, { zone: 'p-can01', client: new HttpClient(next)});
-      done();
     });
+
+    interceptor.intercept(request, next).subscribe(() => {});
   });
 });
