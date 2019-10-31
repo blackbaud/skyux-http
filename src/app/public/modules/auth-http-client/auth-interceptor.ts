@@ -46,6 +46,8 @@ import {
 
 //#endregion
 
+const TOKENIZED_LOCAL_URL_REGEX = /1bb:\/\/([a-z0-9\-]+)(:[0-9]+)?\/(.*)/;
+
 function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   // The if statement here is just a sanity check; it appears that by the time
   // this interceptor is called, the params property is always defined, even if
@@ -62,6 +64,34 @@ function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   }
 
   return request;
+}
+
+function getUrl(requestUrl: string, token: string): Promise<string> {
+  const decodedToken = this.tokenProvider.decodeToken(token);
+  return BBAuthClientFactory.BBAuth.getUrl(requestUrl, {zone:  decodedToken['1bb.zone'] });
+}
+
+function getClient(handler: HttpHandler): HttpClient {
+  return new HttpClient(handler);
+}
+
+function getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
+  const regexGroups: any = TOKENIZED_LOCAL_URL_REGEX.exec(requestUrl);
+  if (regexGroups) {
+    if (regexGroups[2]) {
+      let client: HttpClient = getClient(handler);
+      client.get(`http://localhost${regexGroups[2]}/version`).subscribe((res) => {
+        return Promise.resolve(`http:localhost${regexGroups[2]}/${regexGroups[3]}`);
+      }, () => {
+        // TODO maybe put something here in order to debug not hitting local when you think you should be
+        return getUrl(requestUrl, token);
+      });
+    } else {
+      return getUrl(requestUrl, token);
+    }
+  } else {
+    return getUrl(requestUrl, token);
+  }
 }
 
 @Injectable()
@@ -103,18 +133,12 @@ export class SkyAuthInterceptor implements HttpInterceptor {
       return Observable
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
-          const decodedToken = this.tokenProvider.decodeToken(token);
-
-          // TODO make this not any once we've updated the interface
-          const argsMap: any = {
-            zone:  decodedToken['1bb.zone'],
-            client: this.config.runtime.command === 'serve' ? new HttpClient(next) : undefined
-          };
+          let urlToUse: Promise<string> = this.config.runtime.command === 'serve' ?
+            getLocallyServedUrl(request.url, token, next) :
+            getUrl(request.url, token);
 
           return Observable
-            .fromPromise(
-              BBAuthClientFactory.BBAuth.getUrl(request.url, argsMap)
-            )
+            .fromPromise(urlToUse)
             .switchMap((url) => {
               let authRequest = request.clone({
                 setHeaders: {

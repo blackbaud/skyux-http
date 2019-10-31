@@ -1,7 +1,6 @@
 //#region imports
 
 import {
-  HttpClient,
   HttpHandler,
   HttpParams,
   HttpRequest
@@ -10,7 +9,6 @@ import {
 import {
   TestBed
 } from '@angular/core/testing';
-import { BBAuthClientFactory } from '@skyux/auth-client-factory';
 
 import {
   Observable
@@ -339,16 +337,4 @@ describe('Auth interceptor', () => {
       );
     });
 
-  it('should pass defined HttpClient to getUrl if served locally', (done) => {
-    const interceptor = createInteceptorWithCommand('serve');
-    const request = createRequest(true, '1bb://eng-hub00/version');
-
-    let authSpy = spyOn(BBAuthClientFactory.BBAuth, 'getUrl').and.callThrough();
-
-    validateAuthRequest(done, () => {
-      expect(authSpy).toHaveBeenCalledWith(request.url, { zone: 'p-can01', client: new HttpClient(next)});
-    });
-
-    interceptor.intercept(request, next).subscribe(() => {});
-  });
 });
