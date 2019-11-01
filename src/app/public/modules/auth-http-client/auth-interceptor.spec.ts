@@ -229,6 +229,15 @@ describe('Auth interceptor', () => {
     validateContext(undefined, 'abc', undefined, 'https://example.com/get/?leid=abc', done);
   });
 
+  it('should be able to make an HttpClient from a provided HttpHandler for local serve checking', (done) => {
+    const interceptor = createInteceptor();
+
+    const client = interceptor.getClient(next);
+
+    expect(client).toBeTruthy();
+    done();
+  });
+
   it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
     const interceptor = createInteceptor();
 
@@ -244,12 +253,42 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
+  xit('should convert tokenized urls and honor the hard-coded zone, event with a port added', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      true,
+      '1bb://eng-hub00-pusa01:8080/version'
+    );
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
   it('should convert tokenized urls and get zone from the token.', (done) => {
     const interceptor = createInteceptor();
 
     const request = createRequest(
       true,
       '1bb://eng-hub00/version'
+    );
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pcan01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  xit('should convert tokenized urls and get zone from the token, even with a port added', (done) => {
+    const interceptor = createInteceptor();
+
+    const request = createRequest(
+      true,
+      '1bb://eng-hub00:8080/version'
     );
 
     validateAuthRequest(done, (authRequest) => {

@@ -66,34 +66,6 @@ function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   return request;
 }
 
-function getUrl(requestUrl: string, token: string): Promise<string> {
-  const decodedToken = this.tokenProvider.decodeToken(token);
-  return BBAuthClientFactory.BBAuth.getUrl(requestUrl, {zone:  decodedToken['1bb.zone'] });
-}
-
-function getClient(handler: HttpHandler): HttpClient {
-  return new HttpClient(handler);
-}
-
-function getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
-  const regexGroups: any = TOKENIZED_LOCAL_URL_REGEX.exec(requestUrl);
-  if (regexGroups) {
-    if (regexGroups[2]) {
-      let client: HttpClient = getClient(handler);
-      client.get(`http://localhost${regexGroups[2]}/version`).subscribe((res) => {
-        return Promise.resolve(`http:localhost${regexGroups[2]}/${regexGroups[3]}`);
-      }, () => {
-        // TODO maybe put something here in order to debug not hitting local when you think you should be
-        return getUrl(requestUrl, token);
-      });
-    } else {
-      return getUrl(requestUrl, token);
-    }
-  } else {
-    return getUrl(requestUrl, token);
-  }
-}
-
 @Injectable()
 export class SkyAuthInterceptor implements HttpInterceptor {
   constructor(
@@ -134,8 +106,8 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
           let urlToUse: Promise<string> = this.config.runtime.command === 'serve' ?
-            getLocallyServedUrl(request.url, token, next) :
-            getUrl(request.url, token);
+            this.getLocallyServedUrl(request.url, token, next) :
+            this.getUrl(request.url, token);
 
           return Observable
             .fromPromise(urlToUse)
@@ -152,6 +124,34 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     }
 
     return next.handle(request);
+  }
+
+  public getClient(handler: HttpHandler): HttpClient {
+    return new HttpClient(handler);
+  }
+
+  private getUrl(requestUrl: string, token: string): Promise<string> {
+    const decodedToken = this.tokenProvider.decodeToken(token);
+    return BBAuthClientFactory.BBAuth.getUrl(requestUrl, {zone:  decodedToken['1bb.zone'] });
+  }
+
+  private getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
+    const regexGroups: any = TOKENIZED_LOCAL_URL_REGEX.exec(requestUrl);
+    if (regexGroups) {
+      if (regexGroups[2]) {
+        let client: HttpClient = this.getClient(handler);
+        client.get(`http://localhost${regexGroups[2]}/version`).subscribe((res) => {
+          return Promise.resolve(`http:localhost${regexGroups[2]}/${regexGroups[3]}`);
+        }, () => {
+          // TODO maybe put something here in order to debug not hitting local when you think you should be
+          return this.getUrl(requestUrl, token);
+        });
+      } else {
+        return this.getUrl(requestUrl, token);
+      }
+    } else {
+      return this.getUrl(requestUrl, token);
+    }
   }
 
 }
