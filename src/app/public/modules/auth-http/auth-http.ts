@@ -32,6 +32,7 @@ import {
 } from './auth-token-provider';
 /**
  * Makes authenticated web requests to Blackbaud web services using a BBID token.
+ * @deprecated Please import `SkyAuthHttpClientModule` and use Angular's `HttpClient`, instead.
  */
 @Injectable()
 export class SkyAuthHttp extends Http {
