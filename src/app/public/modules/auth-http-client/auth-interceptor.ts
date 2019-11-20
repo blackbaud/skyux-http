@@ -109,12 +109,8 @@ export class SkyAuthInterceptor implements HttpInterceptor {
       return Observable
         .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
         .switchMap((token) => {
-          let urlToUse: Promise<string> = this.config.runtime.command === 'serve' ?
-            this.getLocallyServedUrl(request.url, token, next) :
-            this.getUrl(request.url, token);
-
           return Observable
-            .fromPromise(urlToUse)
+            .fromPromise(this.getUrl(request.url, token, next))
             .switchMap((url) => {
               let authRequest = request.clone({
                 setHeaders: {
@@ -134,7 +130,13 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     return new HttpClient(handler);
   }
 
-  private getUrl(requestUrl: string, token: string): Promise<string> {
+  private getUrl(url: string, token: string, handler: HttpHandler): Promise<string> {
+    return this.config.runtime.command === 'serve' ?
+      this.getLocallyServedUrl(url, token, handler) :
+      this.getNonLocalUrl(url, token);
+  }
+
+  private getNonLocalUrl(requestUrl: string, token: string): Promise<string> {
     const decodedToken = this.tokenProvider.decodeToken(token);
     return BBAuthClientFactory.BBAuth.getUrl(requestUrl, {zone:  decodedToken['1bb.zone'] });
   }
@@ -144,16 +146,16 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     if (match && match[LOCAL_PORT_INDEX]) {
       let localPort = match[LOCAL_PORT_INDEX];
       let client: HttpClient = this.getClient(handler);
-      client.get(`http://localhost${localPort}/version`).subscribe(
-        () => {
-          return Promise.resolve(`http:localhost${localPort}/${match[ENDPOINT_INDEX]}`);
-        },
-        () => {
-          // TODO maybe put something here in order to debug not hitting local when you think you should be
-          return this.getUrl(requestUrl, token);
+      return client.get(`http://localhost${localPort}/version`).toPromise()
+        .then(() => {
+          // TODO something here in order to debug not hitting local when you think you should be?
+          return Promise.resolve(`http://localhost${localPort}/${match[ENDPOINT_INDEX]}`);
+        })
+        .catch(() => {
+          return this.getNonLocalUrl(requestUrl, token);
         });
     } else {
-      return this.getUrl(requestUrl, token);
+      return this.getNonLocalUrl(requestUrl, token);
     }
   }
 

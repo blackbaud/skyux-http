@@ -9,6 +9,7 @@ import {
 import {
   TestBed
 } from '@angular/core/testing';
+import { throwError } from 'rxjs/index';
 
 import {
   Observable
@@ -253,13 +254,81 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
-  it('should convert tokenized urls and honor the hard-coded zone, event with a port added', (done) => {
+  it('should convert tokenized urls and honor the hard-coded zone, even with a port added', (done) => {
     const interceptor = createInteceptor();
 
     const request = createRequest(
       true,
       '1bb://eng-hub00-pusa01:8080/version'
     );
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should convert tokenized urls when serving locally without a port provided', (done) => {
+    const interceptor = createInteceptorWithCommand('serve');
+
+    const request = createRequest(
+      true,
+      '1bb://eng-hub00-pusa01/version'
+    );
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should key urls when serving locally if url is not tokenizable', (done) => {
+    const interceptor = createInteceptorWithCommand('serve');
+
+    const request = createRequest(
+      true,
+      'google.com'
+    );
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('google.com');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should convert to a local url when serving locally with a port provided and a success local service check', (done) => {
+    const interceptor = createInteceptorWithCommand('serve');
+
+    const request = createRequest(
+      true,
+      '1bb://eng-hub00-pusa01:8080/version'
+    );
+
+    let mockClient = jasmine.createSpyObj('HttpClient', ['get']);
+    mockClient.get.and.returnValue(Observable.of('ok'));
+    spyOn(interceptor, 'getClient').and.returnValue(mockClient);
+
+    validateAuthRequest(done, (authRequest) => {
+      expect(authRequest.url).toBe('http://localhost:8080/version');
+    });
+
+    interceptor.intercept(request, next).subscribe(() => {});
+  });
+
+  it('should convert tokenized urls when serving locally with a provided port but are unable to find the service locally', (done) => {
+    const interceptor = createInteceptorWithCommand('serve');
+
+    const request = createRequest(
+      true,
+      '1bb://eng-hub00-pusa01:8080/version'
+    );
+
+    let mockClient = jasmine.createSpyObj('HttpClient', ['get']);
+    mockClient.get.and.returnValue(throwError('boomz-mcgeee'));
+    spyOn(interceptor, 'getClient').and.returnValue(mockClient);
 
     validateAuthRequest(done, (authRequest) => {
       expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
