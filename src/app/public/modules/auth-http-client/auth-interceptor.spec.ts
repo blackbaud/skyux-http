@@ -22,9 +22,12 @@ import {
 } from '@skyux/config';
 
 import {
-  SkyAuthTokenContextArgs,
+  SkyAuthTokenContextArgs
+} from '../auth-http/auth-token-context-args';
+
+import {
   SkyAuthTokenProvider
-} from '../auth-http';
+} from '../auth-http/auth-token-provider';
 
 import {
   SkyAuthInterceptor
