@@ -9,7 +9,10 @@ import {
 import {
   TestBed
 } from '@angular/core/testing';
-import { throwError } from 'rxjs/index';
+
+import {
+  throwError
+} from 'rxjs/index';
 
 import {
   Observable
