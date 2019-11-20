@@ -44,9 +44,13 @@ import {
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
 
-//#endregion
+import {
+  ENDPOINT_INDEX,
+  LOCAL_PORT_INDEX,
+  TOKENIZED_URL_REGEX
+} from '@blackbaud/auth-client';
 
-const TOKENIZED_LOCAL_URL_REGEX = /1bb:\/\/([a-z0-9\-]+)(:[0-9]+)?\/(.*)/;
+//#endregion
 
 function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
   // The if statement here is just a sanity check; it appears that by the time
@@ -136,15 +140,18 @@ export class SkyAuthInterceptor implements HttpInterceptor {
   }
 
   private getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
-    const regexGroups: any = TOKENIZED_LOCAL_URL_REGEX.exec(requestUrl);
+    const regexGroups: any = TOKENIZED_URL_REGEX.exec(requestUrl);
     if (regexGroups) {
-      if (regexGroups[2]) {
+      let localPort = regexGroups[LOCAL_PORT_INDEX];
+      if (localPort) {
         let client: HttpClient = this.getClient(handler);
-        client.get(`http://localhost${regexGroups[2]}/version`).subscribe((res) => {
-          return Promise.resolve(`http:localhost${regexGroups[2]}/${regexGroups[3]}`);
-        }, () => {
-          // TODO maybe put something here in order to debug not hitting local when you think you should be
-          return this.getUrl(requestUrl, token);
+        client.get(`http://localhost${localPort}/version`).subscribe(
+          () => {
+            return Promise.resolve(`http:localhost${localPort}/${regexGroups[ENDPOINT_INDEX]}`);
+            },
+          () => {
+            // TODO maybe put something here in order to debug not hitting local when you think you should be
+            return this.getUrl(requestUrl, token);
         });
       } else {
         return this.getUrl(requestUrl, token);

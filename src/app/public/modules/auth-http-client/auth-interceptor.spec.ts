@@ -253,7 +253,7 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
-  xit('should convert tokenized urls and honor the hard-coded zone, event with a port added', (done) => {
+  it('should convert tokenized urls and honor the hard-coded zone, event with a port added', (done) => {
     const interceptor = createInteceptor();
 
     const request = createRequest(
@@ -283,7 +283,7 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
-  xit('should convert tokenized urls and get zone from the token, even with a port added', (done) => {
+  it('should convert tokenized urls and get zone from the token, even with a port added', (done) => {
     const interceptor = createInteceptor();
 
     const request = createRequest(
