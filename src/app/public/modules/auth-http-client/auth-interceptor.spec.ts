@@ -287,7 +287,7 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
-  it('should key urls when serving locally if url is not tokenizable', (done) => {
+  it('should convert urls when serving locally if url is not tokenizable', (done) => {
     const interceptor = createInteceptorWithCommand('serve');
 
     const request = createRequest(
