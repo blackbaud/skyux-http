@@ -140,22 +140,18 @@ export class SkyAuthInterceptor implements HttpInterceptor {
   }
 
   private getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
-    const regexGroups: any = TOKENIZED_URL_REGEX.exec(requestUrl);
-    if (regexGroups) {
-      let localPort = regexGroups[LOCAL_PORT_INDEX];
-      if (localPort) {
-        let client: HttpClient = this.getClient(handler);
-        client.get(`http://localhost${localPort}/version`).subscribe(
-          () => {
-            return Promise.resolve(`http:localhost${localPort}/${regexGroups[ENDPOINT_INDEX]}`);
-            },
-          () => {
-            // TODO maybe put something here in order to debug not hitting local when you think you should be
-            return this.getUrl(requestUrl, token);
+    let match = TOKENIZED_URL_REGEX.exec(requestUrl);
+    if (match && match[LOCAL_PORT_INDEX]) {
+      let localPort = match[LOCAL_PORT_INDEX];
+      let client: HttpClient = this.getClient(handler);
+      client.get(`http://localhost${localPort}/version`).subscribe(
+        () => {
+          return Promise.resolve(`http:localhost${localPort}/${match[ENDPOINT_INDEX]}`);
+        },
+        () => {
+          // TODO maybe put something here in order to debug not hitting local when you think you should be
+          return this.getUrl(requestUrl, token);
         });
-      } else {
-        return this.getUrl(requestUrl, token);
-      }
     } else {
       return this.getUrl(requestUrl, token);
     }

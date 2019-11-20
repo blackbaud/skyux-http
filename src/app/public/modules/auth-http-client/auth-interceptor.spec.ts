@@ -375,5 +375,4 @@ describe('Auth interceptor', () => {
         jasmine.objectContaining(expectedTokenArgs)
       );
     });
-
 });
