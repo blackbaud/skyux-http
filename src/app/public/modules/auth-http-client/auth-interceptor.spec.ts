@@ -302,7 +302,7 @@ describe('Auth interceptor', () => {
     interceptor.intercept(request, next).subscribe(() => {});
   });
 
-  it('should convert to a local url when serving locally with a port provided and a success local service check', (done) => {
+  it('should convert to a local url when serving locally with a port provided and a successful local service check', (done) => {
     const interceptor = createInteceptorWithCommand('serve');
 
     const request = createRequest(
