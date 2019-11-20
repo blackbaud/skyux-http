@@ -148,10 +148,10 @@ export class SkyAuthInterceptor implements HttpInterceptor {
       let client: HttpClient = this.getClient(handler);
       return client.get(`http://localhost${localPort}/version`).toPromise()
         .then(() => {
-          // TODO something here in order to debug not hitting local when you think you should be?
           return Promise.resolve(`http://localhost${localPort}/${match[ENDPOINT_INDEX]}`);
         })
         .catch(() => {
+          // TODO something here in order to debug not hitting local when you think you should be?
           return this.getNonLocalUrl(requestUrl, token);
         });
     } else {
