@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/blackbaud/skyux-http#readme",
   "peerDependencies": {
+    "@angular/common": ">=4.3.6",
     "@angular/core": ">=4.3.6",
-    "@angular/http": ">=4.3.6",
     "@blackbaud/auth-client": "^2.17.1",
     "@skyux/config": "^3.0.0"
   },
