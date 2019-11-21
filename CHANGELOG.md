@@ -1,3 +1,7 @@
+# 3.9.0 (2019-11-21)
+
+- Added a deprecation message to the `SkyAuthHttp` utility. This feature will be removed in the next major version of `@skyux/http` because of its dependency on Angular's `@angular/http` module (which was removed in Angular version 8). Instead of using `SkyAuthHttp`, use Angular's `HttpClient` and import the `SkyAuthHttpClientModule` to implement features such as Blackbaud authentication. [#44](https://github.com/blackbaud/skyux-http/pull/44)
+
 # 3.8.0 (2019-10-11)
 
 - Added `SkyAuthGetTokenArgs` to the package exports. [#42](https://github.com/blackbaud/skyux-http/pull/42)
