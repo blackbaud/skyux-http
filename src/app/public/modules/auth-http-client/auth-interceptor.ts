@@ -14,12 +14,13 @@ import {
 } from '@angular/core';
 
 import {
+  from as observableFrom,
   Observable
-} from 'rxjs/Observable';
+} from 'rxjs';
 
-import 'rxjs/add/observable/fromPromise';
-
-import 'rxjs/add/operator/switchMap';
+import {
+  switchMap
+} from 'rxjs/operators';
 
 import {
   BBAuthClientFactory
@@ -99,27 +100,28 @@ export class SkyAuthInterceptor implements HttpInterceptor {
         tokenContextArgs.permissionScope = permissionScope;
       }
 
-      return Observable
-        .fromPromise(this.tokenProvider.getContextToken(tokenContextArgs))
-        .switchMap((token) => {
+      return observableFrom(
+        this.tokenProvider.getContextToken(tokenContextArgs)
+      ).pipe(
+        switchMap((token) => {
           const decodedToken = this.tokenProvider.decodeToken(token);
-          return Observable
-            .fromPromise(
-              BBAuthClientFactory.BBAuth.getUrl(request.url,
-              {
-                zone: decodedToken['1bb.zone']
-              })
-            )
-            .switchMap((url) => {
-              let authRequest = request.clone({
+          return observableFrom(
+            BBAuthClientFactory.BBAuth.getUrl(request.url, {
+              zone: decodedToken['1bb.zone']
+            })
+          ).pipe(
+            switchMap((url) => {
+              const authRequest = request.clone({
                 setHeaders: {
                   Authorization: `Bearer ${token}`
                 },
                 url: this.config.runtime.params.getUrl(url)
               });
               return next.handle(authRequest);
-            });
-        });
+            })
+          );
+        })
+      );
     }
 
     return next.handle(request);
