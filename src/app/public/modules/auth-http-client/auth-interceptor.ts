@@ -44,12 +44,6 @@ import {
   SKY_AUTH_PARAM_PERMISSION_SCOPE
 } from './auth-interceptor-params';
 
-import {
-  ENDPOINT_INDEX,
-  LOCAL_PORT_INDEX,
-  TOKENIZED_URL_REGEX
-} from '@blackbaud/auth-client';
-
 //#endregion
 
 function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
@@ -142,13 +136,13 @@ export class SkyAuthInterceptor implements HttpInterceptor {
   }
 
   private getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
-    let match = TOKENIZED_URL_REGEX.exec(requestUrl);
-    if (match && match[LOCAL_PORT_INDEX]) {
-      let localPort = match[LOCAL_PORT_INDEX];
+    let urlData = BBAuthClientFactory.BBAuth.extractUrl(requestUrl);
+    if (urlData.port) {
+      let localPort = urlData.port;
       let client: HttpClient = this.getClient(handler);
-      return client.get(`http://localhost${localPort}/version`).toPromise()
+      return client.get(`http://localhost:${localPort}/version`).toPromise()
         .then(() => {
-          return Promise.resolve(`http://localhost${localPort}/${match[ENDPOINT_INDEX]}`);
+          return Promise.resolve(`http://localhost:${localPort}/${urlData.endpoint}`);
         })
         .catch(() => {
           // TODO something here in order to debug not hitting local when you think you should be?
