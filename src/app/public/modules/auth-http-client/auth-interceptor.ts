@@ -36,7 +36,7 @@ import {
 
 import {
   LocalEndpointChecker
-} from '../auth-http/local-endpoint-checker';
+} from './local-endpoint-checker';
 
 import {
   SKY_AUTH_DEFAULT_PERMISSION_SCOPE
