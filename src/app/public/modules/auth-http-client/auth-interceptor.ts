@@ -124,13 +124,12 @@ export class SkyAuthInterceptor implements HttpInterceptor {
   }
 
   private getUrl(url: string, token: string, handler: HttpHandler): Promise<string> {
-    return this.config.runtime.command === 'serve' ?
-      LocalEndpointChecker.getUrlForLocalServe(
-        url,
-        handler,
-        this.config.skyux.appSettings.localHost,
-        () => this.getBBAuthUrl(url, token)) :
-      this.getBBAuthUrl(url, token);
+    if (this.config.runtime.command === 'serve') {
+      const localServerHost = this.config.skyux.appSettings.localHost;
+      return LocalEndpointChecker.getUrlForLocalServe(url, handler, localServerHost, () => this.getBBAuthUrl(url, token));
+    } else {
+      return this.getBBAuthUrl(url, token);
+    }
   }
 
   private getBBAuthUrl(requestUrl: string, token: string): Promise<string> {
