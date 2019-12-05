@@ -14,8 +14,8 @@ export class LocalEndpointChecker {
                                     baseLocalServer: string,
                                     fallBack: () => Promise<string>): Promise<string> {
     let urlData = BBAuthClientFactory.BBAuth.extractUrl(requestUrl);
-    if (urlData.port) {
-      let localPort = urlData.port;
+    let localPort = urlData.port;
+    if (localPort) {
       let client: HttpClient = new HttpClient(handler);
       return client.get(`${baseLocalServer}:${localPort}/version`).toPromise()
         .then(() => {
