@@ -1,7 +1,6 @@
 //#region imports
 
 import {
-  HttpClient,
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
@@ -34,6 +33,10 @@ import {
   SkyAuthTokenContextArgs,
   SkyAuthTokenProvider
 } from '../auth-http';
+
+import {
+  LocalEndpointChecker
+} from '../auth-http/local-endpoint-checker';
 
 import {
   SKY_AUTH_DEFAULT_PERMISSION_SCOPE
@@ -120,37 +123,19 @@ export class SkyAuthInterceptor implements HttpInterceptor {
     return next.handle(request);
   }
 
-  public getClient(handler: HttpHandler): HttpClient {
-    return new HttpClient(handler);
-  }
-
   private getUrl(url: string, token: string, handler: HttpHandler): Promise<string> {
     return this.config.runtime.command === 'serve' ?
-      this.getLocallyServedUrl(url, token, handler) :
-      this.getNonLocalUrl(url, token);
+      LocalEndpointChecker.getUrlForLocalServe(
+        url,
+        handler,
+        this.config.skyux.appSettings.localHost,
+        () => this.getBBAuthUrl(url, token)) :
+      this.getBBAuthUrl(url, token);
   }
 
-  private getNonLocalUrl(requestUrl: string, token: string): Promise<string> {
+  private getBBAuthUrl(requestUrl: string, token: string): Promise<string> {
     const decodedToken = this.tokenProvider.decodeToken(token);
     return BBAuthClientFactory.BBAuth.getUrl(requestUrl, {zone:  decodedToken['1bb.zone'] });
-  }
-
-  private getLocallyServedUrl(requestUrl: string, token: string, handler: HttpHandler): Promise<string> {
-    let urlData = BBAuthClientFactory.BBAuth.extractUrl(requestUrl);
-    if (urlData.port) {
-      let localPort = urlData.port;
-      let client: HttpClient = this.getClient(handler);
-      return client.get(`http://localhost:${localPort}/version`).toPromise()
-        .then(() => {
-          return Promise.resolve(`http://localhost:${localPort}/${urlData.endpoint}`);
-        })
-        .catch(() => {
-          // TODO something here in order to debug not hitting local when you think you should be?
-          return this.getNonLocalUrl(requestUrl, token);
-        });
-    } else {
-      return this.getNonLocalUrl(requestUrl, token);
-    }
   }
 
 }

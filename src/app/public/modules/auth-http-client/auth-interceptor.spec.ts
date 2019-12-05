@@ -11,10 +11,6 @@ import {
 } from '@angular/core/testing';
 
 import {
-  throwError
-} from 'rxjs/index';
-
-import {
   Observable
 } from 'rxjs/Observable';
 
@@ -77,7 +73,11 @@ describe('Auth interceptor', () => {
           },
           command: command
         } as any,
-        skyux: {}
+        skyux: {
+          appSettings: {
+            localHost: 'http://localhost'
+          }
+        }
       });
   }
 
@@ -233,15 +233,6 @@ describe('Auth interceptor', () => {
     validateContext(undefined, 'abc', undefined, 'https://example.com/get/?leid=abc', done);
   });
 
-  it('should be able to make an HttpClient from a provided HttpHandler for local serve checking', (done) => {
-    const interceptor = createInteceptor();
-
-    const client = interceptor.getClient(next);
-
-    expect(client).toBeTruthy();
-    done();
-  });
-
   it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
     const interceptor = createInteceptor();
 
@@ -297,44 +288,6 @@ describe('Auth interceptor', () => {
 
     validateAuthRequest(done, (authRequest) => {
       expect(authRequest.url).toBe('google.com');
-    });
-
-    interceptor.intercept(request, next).subscribe(() => {});
-  });
-
-  it('should convert to a local url when serving locally with a port provided and a successful local service check', (done) => {
-    const interceptor = createInteceptorWithCommand('serve');
-
-    const request = createRequest(
-      true,
-      '1bb://eng-hub00-pusa01:8080/version'
-    );
-
-    let mockClient = jasmine.createSpyObj('HttpClient', ['get']);
-    mockClient.get.and.returnValue(Observable.of('ok'));
-    spyOn(interceptor, 'getClient').and.returnValue(mockClient);
-
-    validateAuthRequest(done, (authRequest) => {
-      expect(authRequest.url).toBe('http://localhost:8080/version');
-    });
-
-    interceptor.intercept(request, next).subscribe(() => {});
-  });
-
-  it('should convert tokenized urls when serving locally with a provided port but are unable to find the service locally', (done) => {
-    const interceptor = createInteceptorWithCommand('serve');
-
-    const request = createRequest(
-      true,
-      '1bb://eng-hub00-pusa01:8080/version'
-    );
-
-    let mockClient = jasmine.createSpyObj('HttpClient', ['get']);
-    mockClient.get.and.returnValue(throwError('boomz-mcgeee'));
-    spyOn(interceptor, 'getClient').and.returnValue(mockClient);
-
-    validateAuthRequest(done, (authRequest) => {
-      expect(authRequest.url).toBe('https://eng-pusa01.app.blackbaud.net/hub00/version');
     });
 
     interceptor.intercept(request, next).subscribe(() => {});
