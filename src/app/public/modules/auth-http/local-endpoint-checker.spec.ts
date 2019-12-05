@@ -32,7 +32,7 @@ describe('Local Endpoint Checker', () => {
     });
   });
 
-  it('should convert tokenized urls when serving locally with a provided port but are unable to find the service locally', (done) => {
+  it('should rely on the fallback when serving locally with a provided port but are unable to find the service locally', (done) => {
 
     next.handle.and.returnValue(throwError('service not found locally so we boomz-mcgeee!'));
 
