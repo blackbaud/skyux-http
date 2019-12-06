@@ -17,7 +17,8 @@ export class LocalEndpointChecker {
     let localPort = urlData.port;
     if (localPort) {
       let client: HttpClient = new HttpClient(handler);
-      return client.get(`${baseLocalServer}:${localPort}/version`).toPromise()
+      let url = `${baseLocalServer}:${localPort}/monitor`;
+      return client.get(url).toPromise()
         .then(() => {
           return Promise.resolve(`${baseLocalServer}:${localPort}/${urlData.endpoint}`);
         })
