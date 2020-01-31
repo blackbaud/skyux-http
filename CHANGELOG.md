@@ -1,3 +1,7 @@
+# 4.0.0-rc.1 (2020-01-31)
+
+- Replaced the deprecated `HttpObserve` with an inline type. [#51](https://github.com/blackbaud/skyux-http/pull/51)
+
 # 4.0.0-rc.0 (2019-11-21)
 
 **Breaking changes:**
