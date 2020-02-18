@@ -1,10 +1,20 @@
+# 4.0.0-rc.2 (2020-02-18)
+
+### New features
+
+- Updated the pipeline to transpile to the [Angular Package Format](https://docs.google.com/document/d/1CZC2rcpxffTDfRDs6p1cfbmKNLA6x5O-NtkJglDaBVs/preview). [#53](https://github.com/blackbaud/skyux-http/pull/53)
+
+### Breaking changes
+
+- Dropped support for `rxjs@5`. Consumers may install `rxjs-compat@^6` to support older versions of `rxjs`. [#53](https://github.com/blackbaud/skyux-http/pull/53)
+
 # 4.0.0-rc.1 (2020-01-31)
 
 - Replaced the deprecated `HttpObserve` with an inline type. [#51](https://github.com/blackbaud/skyux-http/pull/51)
 
 # 4.0.0-rc.0 (2019-11-21)
 
-**Breaking changes:**
+### Breaking changes:
 - Removed the `SkyAuthHttp` utility. Please use Angular's `HttpClient` instead, and import the `SkyAuthHttpClientModule` in order to implement features such as Blackbaud authentication. [#46](https://github.com/blackbaud/skyux-http/pull/46)
 
 # 3.9.0 (2019-11-21)
