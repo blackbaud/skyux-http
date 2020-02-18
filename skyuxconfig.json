@@ -13,5 +13,11 @@
       "@skyux/theme/css/sky.css"
     ]
   },
+  "librarySettings": {
+    "whitelistedNonPeerDependencies": [
+      "@skyux/auth-client-factory",
+      "jwt-decode"
+    ]
+  },
   "plugins": []
 }
