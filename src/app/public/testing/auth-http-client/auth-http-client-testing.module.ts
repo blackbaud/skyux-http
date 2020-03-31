@@ -9,7 +9,7 @@ import {
 import {
   SkyAuthHttpClientModule,
   SkyAuthTokenProvider
-} from '../../index';
+} from '@skyux/http';
 
 import {
   SkyAuthTokenMockProvider
