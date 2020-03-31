@@ -11,7 +11,7 @@ import {
   SkyAuthGetTokenArgs,
   SkyAuthToken,
   SkyAuthTokenContextArgs
-} from '../../index';
+} from '@skyux/http';
 
 /**
  * Provides a mock token to downstream consumers for unit testing purposes.

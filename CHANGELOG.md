@@ -1,3 +1,7 @@
+# 4.0.0-rc.3 (2020-03-31)
+
+- Upgraded peer and development dependencies.
+
 # 4.0.0-rc.2 (2020-02-18)
 
 ### New features
