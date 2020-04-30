@@ -13,10 +13,19 @@ import {
   SkyAuthInterceptor
 } from './auth-interceptor';
 
+import {
+  NoAuthInterceptor
+} from './no-auth-interceptor';
+
 //#endregion
 
 @NgModule({
   providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: NoAuthInterceptor,
+      multi: true
+    },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SkyAuthInterceptor,
