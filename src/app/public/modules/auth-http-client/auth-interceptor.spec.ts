@@ -45,7 +45,8 @@ describe('Auth interceptor', () => {
   let next: Spy<HttpHandler>;
 
   function createInteceptor(envId?: string, leId?: string, getUrlResult?: string) {
-    return new SkyAuthInterceptor(mockTokenProvider as any, createAppConfig(envId, leId, getUrlResult));
+    return new SkyAuthInterceptor(mockTokenProvider as any,
+      createAppConfig(envId, leId, getUrlResult));
   }
 
   function validateContext(

@@ -5,7 +5,8 @@ import {
 import {
   HttpEvent,
   HttpHandler,
-  HttpInterceptor, HttpRequest
+  HttpInterceptor,
+  HttpRequest
 } from '@angular/common/http';
 
 import {
@@ -35,7 +36,8 @@ export class NoAuthInterceptor implements HttpInterceptor {
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const noAuth = request.params &&
-      (!request.params.get(SKY_AUTH_PARAM_AUTH) || request.params.get(SKY_AUTH_PARAM_AUTH) === 'false');
+      (!request.params.get(SKY_AUTH_PARAM_AUTH) ||
+        request.params.get(SKY_AUTH_PARAM_AUTH) === 'false');
 
     if (noAuth) {
       return Observable
