@@ -12,7 +12,7 @@ import {
 } from '@angular/core/testing';
 
 import {
-  NoAuthInterceptor
+  SkyNoAuthInterceptor
 } from './no-auth-interceptor';
 
 import {
@@ -20,7 +20,7 @@ import {
   createRequest,
   Spy,
   validateRequest
-} from '../../testing/auth-http-client/sky-http-interceptor.test-utils';
+} from './testing/sky-http-interceptor.test-utils';
 
 describe('No-auth interceptor', () => {
   let mockRuntimeConfigParameters: Spy<SkyAppRuntimeConfigParams>;
@@ -48,13 +48,13 @@ describe('No-auth interceptor', () => {
           provide: SkyAppConfig,
           useValue: config
         },
-        NoAuthInterceptor
+        SkyNoAuthInterceptor
       ]
     });
   });
 
   it('should pass through the existing request when a bb-authed request', () => {
-    const interceptor: NoAuthInterceptor = TestBed.get(NoAuthInterceptor);
+    const interceptor: SkyNoAuthInterceptor = TestBed.get(SkyNoAuthInterceptor);
     const request = createRequest(true);
 
     next.handle.and.stub();
@@ -65,7 +65,7 @@ describe('No-auth interceptor', () => {
   });
 
   it('should preserve urls not matching the 1bb protocol', (done) => {
-    const interceptor = new NoAuthInterceptor(createAppConfig());
+    const interceptor = new SkyNoAuthInterceptor(createAppConfig());
 
     const request = createRequest(
       false,
@@ -80,7 +80,7 @@ describe('No-auth interceptor', () => {
   });
 
   it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
-    const interceptor = new NoAuthInterceptor(createAppConfig());
+    const interceptor = new SkyNoAuthInterceptor(createAppConfig());
 
     const request = createRequest(
       false,

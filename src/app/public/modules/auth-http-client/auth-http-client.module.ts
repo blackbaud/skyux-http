@@ -14,7 +14,7 @@ import {
 } from './auth-interceptor';
 
 import {
-  NoAuthInterceptor
+  SkyNoAuthInterceptor
 } from './no-auth-interceptor';
 
 //#endregion
@@ -23,7 +23,7 @@ import {
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: NoAuthInterceptor,
+      useClass: SkyNoAuthInterceptor,
       multi: true
     },
     {

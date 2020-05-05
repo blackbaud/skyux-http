@@ -30,7 +30,7 @@ import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/switchMap';
 
 @Injectable()
-export class NoAuthInterceptor implements HttpInterceptor {
+export class SkyNoAuthInterceptor implements HttpInterceptor {
 
   constructor(private config: SkyAppConfig) {}
 
@@ -43,7 +43,7 @@ export class NoAuthInterceptor implements HttpInterceptor {
       return Observable
         .fromPromise(BBAuthClientFactory.BBAuth.getUrl(request.url))
         .switchMap((url) => {
-          let newRequest = request.clone({
+          const newRequest = request.clone({
             url: this.config.runtime.params.getUrl(url)
           });
           return next.handle(newRequest);

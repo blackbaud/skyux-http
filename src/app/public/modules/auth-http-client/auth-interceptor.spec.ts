@@ -34,7 +34,7 @@ import {
   EXAMPLE_URL,
   Spy,
   validateRequest
-} from '../../testing/auth-http-client/sky-http-interceptor.test-utils';
+} from './testing/sky-http-interceptor.test-utils';
 
 //#endregion
 

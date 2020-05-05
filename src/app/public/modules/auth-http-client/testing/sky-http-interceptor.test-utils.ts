@@ -7,7 +7,7 @@ import {
 import {
   SKY_AUTH_PARAM_AUTH,
   SKY_AUTH_PARAM_PERMISSION_SCOPE
-} from '../../modules/auth-http-client/auth-interceptor-params';
+} from '../auth-interceptor-params';
 
 import {
   Observable
