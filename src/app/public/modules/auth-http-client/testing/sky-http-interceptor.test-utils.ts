@@ -18,23 +18,36 @@ export const EXAMPLE_URL = 'https://example.com/get/';
 export type Spy<T> = { [Method in keyof T]: jasmine.Spy; };
 
 export function createRequest(isSkyAuth?: boolean, url?: string, permissionScope?: string) {
-  let params: HttpParams = new HttpParams();
+  let params: HttpParams;
 
   if (isSkyAuth) {
+    params = params || new HttpParams();
     params = params.set(SKY_AUTH_PARAM_AUTH, 'true');
   }
 
   if (permissionScope) {
+    params = params || new HttpParams();
     params = params.set(SKY_AUTH_PARAM_PERMISSION_SCOPE, permissionScope);
   }
 
-  return new HttpRequest(
-    'GET',
-    url || EXAMPLE_URL,
-    {
-      params: params
-    }
-  );
+  let request: HttpRequest<any>;
+
+  if (params) {
+    request = new HttpRequest(
+      'GET',
+      url || EXAMPLE_URL,
+      {
+        params
+      }
+    );
+  } else {
+    request = new HttpRequest(
+      'GET',
+      url || EXAMPLE_URL
+    );
+  }
+
+  return request;
 }
 
 export function validateRequest(

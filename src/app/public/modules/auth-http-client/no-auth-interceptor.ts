@@ -35,9 +35,9 @@ export class SkyNoAuthInterceptor implements HttpInterceptor {
   constructor(private config: SkyAppConfig) {}
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const noAuth = request.params &&
-      (!request.params.get(SKY_AUTH_PARAM_AUTH) ||
-        request.params.get(SKY_AUTH_PARAM_AUTH) === 'false');
+    const noAuth = !request.params ||
+      !request.params.get(SKY_AUTH_PARAM_AUTH) ||
+      request.params.get(SKY_AUTH_PARAM_AUTH) === 'false';
 
     if (noAuth) {
       return Observable
