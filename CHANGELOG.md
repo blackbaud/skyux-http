@@ -1,3 +1,7 @@
+# 4.0.0-rc.4 (2020-05-07)
+
+- Added bug fixes and features from the `master` branch. [#63](https://github.com/blackbaud/skyux-http/pull/63)
+
 # 3.10.0 (2020-05-06)
 
 - Added an HTTP interceptor to translate 1BB-protocol URLs for anonymous web service calls. [#59](https://github.com/blackbaud/skyux-http/pull/59) (Thanks [@Alex-Vaky](https://github.com/Alex-Vaky)!)
