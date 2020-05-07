@@ -1,3 +1,7 @@
+# 3.10.0 (2020-05-06)
+
+- Added an HTTP interceptor to translate 1BB-protocol URLs for anonymous web service calls. [#59](https://github.com/blackbaud/skyux-http/pull/59) (Thanks [@Alex-Vaky](https://github.com/Alex-Vaky)!)
+
 # 4.0.0-rc.3 (2020-03-31)
 
 - Upgraded peer and development dependencies.

@@ -9,9 +9,7 @@
     }
   },
   "app": {
-    "styles": [
-      "@skyux/theme/css/sky.css"
-    ]
+    "styles": []
   },
   "librarySettings": {
     "whitelistedNonPeerDependencies": [
@@ -19,5 +17,10 @@
       "jwt-decode"
     ]
   },
-  "plugins": []
+  "plugins": [],
+  "host": {
+    "frameOptions": {
+      "none": true
+    }
+  }
 }
