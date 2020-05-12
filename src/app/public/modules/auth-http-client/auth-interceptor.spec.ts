@@ -14,10 +14,6 @@ import {
 } from '@skyux/config';
 
 import {
-  of as observableOf
-} from 'rxjs';
-
-import {
   SkyAuthTokenContextArgs
 } from '../auth-http/auth-token-context-args';
 
