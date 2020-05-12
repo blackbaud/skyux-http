@@ -9,9 +9,18 @@
     }
   },
   "app": {
-    "styles": [
-      "@skyux/theme/css/sky.css"
+    "styles": []
+  },
+  "librarySettings": {
+    "whitelistedNonPeerDependencies": [
+      "@skyux/auth-client-factory",
+      "jwt-decode"
     ]
   },
-  "plugins": []
+  "plugins": [],
+  "host": {
+    "frameOptions": {
+      "none": true
+    }
+  }
 }
