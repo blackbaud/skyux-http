@@ -1,3 +1,4 @@
+export * from './modules/auth-http-client/auth-context-provider';
 export * from './modules/auth-http-client/auth-get-token-args';
 export * from './modules/auth-http-client/auth-http-client.module';
 export * from './modules/auth-http-client/auth-interceptor';
