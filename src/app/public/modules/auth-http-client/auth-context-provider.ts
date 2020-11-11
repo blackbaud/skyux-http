@@ -15,7 +15,7 @@ import {
 })
 export class SkyAuthContextProvider {
 
-  public ensureContext(args: SkyAuthContextArgs) {
+  public ensureContext(args: SkyAuthContextArgs): Promise<SkyAuthContextArgs> {
     return BBAuthClientFactory.BBContextProvider.ensureContext(args);
   }
 
