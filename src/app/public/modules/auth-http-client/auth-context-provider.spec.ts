@@ -1,10 +1,10 @@
 import {
-  BBContextArgs
-} from '@blackbaud/auth-client';
-
-import {
   BBAuthClientFactory
 } from '@skyux/auth-client-factory';
+
+import {
+  SkyAuthContextArgs
+} from './auth-context-args';
 
 import {
   SkyAuthContextProvider
@@ -17,7 +17,7 @@ describe('Auth context provider', () => {
       .and
       .returnValue(Promise.resolve({}));
 
-      const args: BBContextArgs = {
+      const args: SkyAuthContextArgs = {
         envId: 'foobar'
       };
 
