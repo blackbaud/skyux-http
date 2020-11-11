@@ -3,19 +3,19 @@ import {
 } from '@angular/core';
 
 import {
-  BBContextArgs
-} from '@blackbaud/auth-client';
-
-import {
   BBAuthClientFactory
 } from '@skyux/auth-client-factory';
+
+import {
+  SkyAuthContextArgs
+} from './auth-context-args';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SkyAuthContextProvider {
 
-  public ensureContext(args: BBContextArgs) {
+  public ensureContext(args: SkyAuthContextArgs) {
     return BBAuthClientFactory.BBContextProvider.ensureContext(args);
   }
 
