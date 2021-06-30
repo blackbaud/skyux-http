@@ -26,7 +26,6 @@
     "@skyux/config": "^5.0.0-beta.0"
   },
   "dependencies": {
-    "@blackbaud/auth-client": "2.47.0",
     "@skyux/auth-client-factory": "1.2.0",
     "jwt-decode": "2.2.0"
   },
