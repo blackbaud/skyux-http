@@ -48,33 +48,21 @@ describe('Auth interceptor', () => {
   function createInteceptor(
     envId?: string,
     leId?: string,
-    getUrlResult?: string,
-    useParamsProvider?: boolean
+    getUrlResult?: string
   ) {
-    let paramsProvider: any;
-
     let appConfig = createAppConfig(envId, leId, getUrlResult);
-
-    if (useParamsProvider) {
-      paramsProvider = {
-        params: appConfig.runtime.params
-      };
-
-      appConfig = undefined;
-    }
 
     return new SkyAuthInterceptor(
       mockTokenProvider as any,
       appConfig,
-      undefined,
-      paramsProvider
+      undefined
     );
   }
 
   function validateContext(
-    envId: string,
-    leId: string,
-    permissionScope: string,
+    envId: string | undefined,
+    leId: string | undefined,
+    permissionScope: string | undefined,
     expectedUrl: string,
     done: DoneFn
   ): void {
@@ -205,17 +193,6 @@ describe('Auth interceptor', () => {
 
   it('should convert tokenized urls and honor the hard-coded zone.', (done) => {
     const interceptor = createInteceptor();
-
-    validateHardcodedZoneUrl(interceptor, done);
-  });
-
-  it('should fall back to params provider if SkyAppConfig is undefined', (done) => {
-    const interceptor = createInteceptor(
-      undefined,
-      undefined,
-      undefined,
-      true
-    );
 
     validateHardcodedZoneUrl(interceptor, done);
   });

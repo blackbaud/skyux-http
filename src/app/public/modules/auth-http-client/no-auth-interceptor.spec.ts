@@ -97,19 +97,4 @@ describe('No-auth interceptor', () => {
 
     validateTokenizedUrl(interceptor, done);
   });
-
-  describe('with missing SkyAppConfig', () => {
-    it('should fall back to params provider if SkyAppConfig is undefined', (done) => {
-      const config = createAppConfig();
-
-      const interceptor = new SkyNoAuthInterceptor(
-        undefined,
-        {
-          params: config.runtime.params
-        } as any
-      );
-
-      validateTokenizedUrl(interceptor, done);
-    });
-  });
 });

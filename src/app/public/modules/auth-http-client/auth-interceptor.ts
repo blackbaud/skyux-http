@@ -27,8 +27,7 @@ import {
 } from '@skyux/auth-client-factory';
 
 import {
-  SkyAppConfig,
-  SkyAppRuntimeConfigParamsProvider
+  SkyAppConfig
 } from '@skyux/config';
 
 import {
@@ -72,13 +71,12 @@ function removeSkyParams(request: HttpRequest<any>): HttpRequest<any> {
 export class SkyAuthInterceptor implements HttpInterceptor {
   constructor(
     private tokenProvider: SkyAuthTokenProvider,
-    @Optional() private config: SkyAppConfig,
-    @Inject(SKY_AUTH_DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope?: string,
-    @Optional() private paramsProvider?: SkyAppRuntimeConfigParamsProvider
+    private config: SkyAppConfig,
+    @Inject(SKY_AUTH_DEFAULT_PERMISSION_SCOPE) @Optional() private defaultPermissionScope?: string
   ) { }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    let auth: boolean;
+    let auth = false;
     let permissionScope: string;
 
     const params = request.params;
@@ -116,13 +114,11 @@ export class SkyAuthInterceptor implements HttpInterceptor {
             })
           ).pipe(
             switchMap((url) => {
-              const runtimeParams = this.config?.runtime.params || this.paramsProvider.params;
-
               const authRequest = request.clone({
                 setHeaders: {
                   Authorization: `Bearer ${token}`
                 },
-                url: runtimeParams.getUrl(url)
+                url: this.config.runtime.params.getUrl(url)
               });
               return next.handle(authRequest);
             })
