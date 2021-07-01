@@ -5,10 +5,6 @@ import {
 } from '@skyux/auth-client-factory';
 
 import {
-  SkyAppRuntimeConfigParams
-} from '@skyux/config';
-
-import {
   SkyAuthToken
 } from './auth-token';
 
@@ -24,8 +20,6 @@ describe('Auth token provider', () => {
 
   let testDecodedToken: SkyAuthToken;
 
-  let mockAppConfig: any;
-
   beforeEach(() => {
     testToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' +
       '.eyJzdWIiOiIxMjM0NTY3ODkwIiwiZ2l2ZW5fbmFtZSI6IkpvaG4iLCJmYW1pbHl' + 'fbmFtZSI6IkRvZSIsImlhdCI6MTUxNjIzOTAyMn0' +
@@ -37,12 +31,6 @@ describe('Auth token provider', () => {
       family_name: 'Doe',
       iat: 1516239022
     };
-
-    mockAppConfig = {
-      runtime: {
-        params: new SkyAppRuntimeConfigParams('https://foo.com/', {})
-      }
-    };
   });
 
   describe('getToken() method', () => {
@@ -52,7 +40,7 @@ describe('Auth token provider', () => {
         .and
         .returnValue(Promise.resolve(testToken));
 
-      const provider = new SkyAuthTokenProvider(mockAppConfig);
+      const provider = new SkyAuthTokenProvider();
 
       provider.getToken().then((token) => {
         expect(token).toBe(testToken);
@@ -69,7 +57,7 @@ describe('Auth token provider', () => {
         .and
         .returnValue(Promise.resolve(testToken));
 
-      const provider = new SkyAuthTokenProvider(mockAppConfig);
+      const provider = new SkyAuthTokenProvider();
 
       provider.getDecodedToken().then((token) => {
         expect(token).toEqual(testDecodedToken);
@@ -131,7 +119,7 @@ describe('Auth token provider', () => {
     it('should handle missing config', () => {
       const getTokenSpy = spyOn(BBAuthClientFactory.BBAuth, 'getToken');
 
-      const provider = new SkyAuthTokenProvider(mockAppConfig);
+      const provider = new SkyAuthTokenProvider();
 
       provider.getContextToken();
 
@@ -141,7 +129,7 @@ describe('Auth token provider', () => {
     it('should add permission scope to the request if specified', () => {
       const getTokenSpy = spyOn(BBAuthClientFactory.BBAuth, 'getToken');
 
-      const provider = new SkyAuthTokenProvider(mockAppConfig);
+      const provider = new SkyAuthTokenProvider();
 
       provider.getContextToken({
         permissionScope: 'abc'
@@ -201,5 +189,18 @@ describe('Auth token provider', () => {
         validate(provider, done);
       }
     );
+
+    it('should fall back to the params provider if no config is provided', (done) => {
+      const provider = new SkyAuthTokenProvider(
+        undefined,
+        {
+          params: testParams
+        } as any
+      );
+
+      validate(provider, done);
+    });
+
   });
+
 });

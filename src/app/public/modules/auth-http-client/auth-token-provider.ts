@@ -1,7 +1,8 @@
 //#region imports
 
 import {
-  Injectable
+  Injectable,
+  Optional
 } from '@angular/core';
 
 import {
@@ -9,7 +10,8 @@ import {
 } from '@skyux/auth-client-factory';
 
 import {
-  SkyAppConfig
+  SkyAppConfig,
+  SkyAppRuntimeConfigParamsProvider
 } from '@skyux/config';
 
 import * as jwtDecode_ from 'jwt-decode';
@@ -36,7 +38,8 @@ import {
 export class SkyAuthTokenProvider {
 
   constructor (
-    private config: SkyAppConfig
+    @Optional() private config?: SkyAppConfig,
+    @Optional() private paramsProvider?: SkyAppRuntimeConfigParamsProvider
   ) { }
 
   /**
@@ -93,19 +96,22 @@ export class SkyAuthTokenProvider {
     return jwtDecode<SkyAuthToken>(token);
   }
 
-  private getContextArgs(args?: SkyAuthTokenContextArgs): SkyAuthGetTokenArgs {
+  private getContextArgs(args: SkyAuthTokenContextArgs): SkyAuthGetTokenArgs {
     const tokenArgs: SkyAuthGetTokenArgs = {};
 
-    const runtimeParams = this.config.runtime.params;
-    const envId = runtimeParams.get('envid');
-    const leId = runtimeParams.get('leid');
+    const runtimeParams = this.config?.runtime.params || this.paramsProvider?.params;
 
-    if (envId) {
-      tokenArgs.envId = envId;
-    }
+    if (runtimeParams) {
+      const envId = runtimeParams.get('envid');
+      const leId = runtimeParams.get('leid');
 
-    if (leId) {
-      tokenArgs.leId = leId;
+      if (envId) {
+        tokenArgs.envId = envId;
+      }
+
+      if (leId) {
+        tokenArgs.leId = leId;
+      }
     }
 
     if (args && args.permissionScope) {
