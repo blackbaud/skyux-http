@@ -1,6 +1,6 @@
 {
   "name": "@skyux/http",
-  "version": "4.2.0",
+  "version": "5.0.0-beta.0",
   "description": "SKY UX HTTP",
   "scripts": {
     "build": "skyux build-public-library",
@@ -23,10 +23,9 @@
     "@angular/common": "^9.1.13 || ^12",
     "@angular/core": "^9.1.13 || ^12",
     "@blackbaud/auth-client": "^2.45.0",
-    "@skyux/config": "^4.4.0"
+    "@skyux/config": "^5.0.0-beta.0"
   },
   "dependencies": {
-    "@blackbaud/auth-client": "2.47.0",
     "@skyux/auth-client-factory": "1.2.0",
     "jwt-decode": "2.2.0"
   },
