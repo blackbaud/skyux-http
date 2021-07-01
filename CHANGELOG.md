@@ -1,7 +1,7 @@
 # 5.0.0-beta.0 (2021-07-01)
 
 - Initial beta release.
-- Added support for `@angular/core@^12`. []()
+- Added support for `@angular/core@^12`. [#77](https://github.com/blackbaud/skyux-http/pull/77)
 
 # 4.2.0 (2021-04-14)
 
