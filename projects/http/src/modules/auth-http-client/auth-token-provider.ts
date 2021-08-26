@@ -14,8 +14,7 @@ import {
   SkyAppRuntimeConfigParamsProvider
 } from '@skyux/config';
 
-import * as jwtDecode_ from 'jwt-decode';
-const jwtDecode = jwtDecode_;
+import * as jwt_decode from 'jwt-decode'
 
 import {
   SkyAuthGetTokenArgs
@@ -93,7 +92,7 @@ export class SkyAuthTokenProvider {
    * @param token The token string to decode.
    */
   public decodeToken(token: string): SkyAuthToken {
-    return jwtDecode<SkyAuthToken>(token);
+    return jwt_decode<SkyAuthToken>(token);
   }
 
   private getContextArgs(args: SkyAuthTokenContextArgs): SkyAuthGetTokenArgs {
