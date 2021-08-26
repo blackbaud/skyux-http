@@ -34,7 +34,7 @@
     "@skyux/packages": "^5.0.0-beta.22",
     "@skyux/router": "^5.0.0-beta.0",
     "@skyux/theme": "^5.0.0-beta.3",
-    "jwt-decode": "2.2.0",
+    "jwt-decode": "3.1.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
@@ -51,7 +51,7 @@
     "@skyux-sdk/documentation-schematics": "^5.0.0-beta.1",
     "@skyux-sdk/testing": "^5.0.0-beta.1",
     "@types/jasmine": "~3.8.0",
-    "@types/jwt-decode": "2.2.1",
+    "@types/jwt-decode": "3.1.0",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "4.28.2",
     "@typescript-eslint/parser": "4.28.2",

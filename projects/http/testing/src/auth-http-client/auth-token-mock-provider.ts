@@ -4,8 +4,7 @@ import {
   Injectable
 } from '@angular/core';
 
-import * as jwtDecode_ from 'jwt-decode';
-const jwtDecode = jwtDecode_;
+import jwt_decode from "jwt-decode";
 
 import {
   SkyAuthGetTokenArgs,
@@ -44,7 +43,7 @@ export class SkyAuthTokenMockProvider {
   }
 
   public decodeToken(token: string): SkyAuthToken {
-    return jwtDecode<SkyAuthToken>(token);
+    return jwt_decode<SkyAuthToken>(token);
   }
 
 }
