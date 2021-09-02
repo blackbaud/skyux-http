@@ -5,12 +5,10 @@ on:
     branches:
       - master
       - 3.x.x
-      - 5.0.0-next
   push:
     branches:
       - master
       - 3.x.x
-      - 5.0.0-next
     tags:
       - '*.*.*'
 
@@ -19,11 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14.x'
+      - uses: actions/setup-node@v1
       - uses: blackbaud/skyux-sdk-actions@master
         with:
           browser-stack-access-key: ${{ secrets.BROWSER_STACK_ACCESS_KEY }}
@@ -31,6 +25,4 @@ jobs:
           github-token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
           npm-token: ${{ secrets.NPM_TOKEN }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
-          visual-baselines-branch: '5.0.0-next'
-      - name: Upload coverage report
-        run: bash <(curl -s https://codecov.io/bash)
+      - uses: codecov/codecov-action@v1
