@@ -1,3 +1,7 @@
+# 5.0.0-beta.1 (2021-09-02)
+
+- Migrated to Angular CLI. [#80](https://github.com/blackbaud/skyux-http/pull/80)
+
 # 5.0.0-beta.0 (2021-07-01)
 
 - Initial beta release.
